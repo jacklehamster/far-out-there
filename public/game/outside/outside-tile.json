@@ -1,0 +1,12 @@
+{
+  "type": "animation",
+  "asset": {
+    "type": "image",
+    "path": "overworld.png"
+  },
+  "sprite": {
+    "width": 10,
+    "height": 10
+  },
+  "range": ["{frame}", "{frame}"]
+}

@@ -1,0 +1,42 @@
+canvas {
+  /* image-rendering: pixelated; */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: pixelated;
+}
+
+.toolbar {
+  margin-bottom: 5px;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  height: 22px;
+  font-size: 10pt;
+}
+
+.codebox {
+  font-size: 8pt;
+}
+
+.toolbar-item {
+  padding: 0 5px;
+  margin: 1px;
+  color: blue;
+  cursor: pointer;
+  border: 0px;
+}
+
+.toolbar-item:hover {
+  text-decoration: underline;
+}
+
+.toolbar-item.selected {
+  margin: 0;
+  border: 1px solid black;
+  color: inherit;
+  cursor: auto;
+  text-decoration: none;
+}
+
+.button {
+  padding: 5px 10px;
+}

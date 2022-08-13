@@ -1,0 +1,20 @@
+{
+  "type": "app",
+  "title": "game",
+  "entry": true,
+  "scenes": [
+    { "type": "reference", "path": "intro/start.json" },
+    { "type": "reference", "path": "intro/logo.json" },
+    { "type": "reference", "path": "intro/intro.json" },
+    { "type": "reference", "path": "intro/space.json" },
+    { "type": "reference", "path": "intro/town.json" },
+    { "type": "reference", "path": "intro/hero.json" },
+    { "type": "reference", "path": "town/map.json" },
+    { "type": "reference", "path": "town/npc.json" },
+    { "type": "reference", "path": "town/house.json" },
+    { "type": "reference", "path": "town/shop.json" },
+    { "type": "reference", "path": "outside/outside.json" },
+    { "type": "reference", "path": "maze/maze.json" }
+  ],
+  "renderers": ["SceneRenderer", "CodeRenderer"]
+}

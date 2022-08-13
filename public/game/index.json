@@ -1,0 +1,10 @@
+[
+	{
+		"type": "reference",
+		"path": "empty.json"
+	},
+	{
+		"type": "reference",
+		"path": "game.json"
+	}
+]

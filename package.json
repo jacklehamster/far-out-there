@@ -1,0 +1,36 @@
+{
+   "type": "module",
+   "scripts": {
+      "start": "webpack && ts-node ./node/index.ts",
+      "dev": "ts-node-dev --respawn ./node/index.ts",
+      "bundle:server": "webpack",
+      "watch-compile:server": "tsc --watch",
+      "watch-bundle:server": "webpack --watch",
+      "concurrent-watch": "concurrently npm:watch-*"
+   },
+   "devDependencies": {
+      "@types/express": "^4.17.13",
+      "@types/md5": "^2.3.2",
+      "@types/node": "^18.6.3",
+      "babel-loader": "^8.2.5",
+      "concurrently": "^7.3.0",
+      "ts-loader": "^9.3.1",
+      "ts-node-dev": "^2.0.0",
+      "typescript": "^4.7.4",
+      "webpack": "^5.74.0",
+      "webpack-cli": "^4.10.0",
+      "webpack-node-externals": "^3.0.0"
+   },
+   "dependencies": {
+      "comment-json": "^4.2.2",
+      "express": "^4.18.1",
+      "express-static": "^1.2.6",
+      "fs": "^0.0.1-security",
+      "http": "^0.0.1-security",
+      "json-stringify-pretty-compact": "^4.0.0",
+      "mathjs": "^11.0.1",
+      "md5": "^2.3.0",
+      "path": "^0.12.7",
+      "url": "^0.11.0"
+   }
+}

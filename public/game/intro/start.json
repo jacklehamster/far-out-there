@@ -1,0 +1,25 @@
+{
+  "type": "menuScene",
+  "title": "start",
+  "background": {
+    "type": "image",
+    "path": "space.png"
+  },
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "start", "x": 22, "y": 27,
+        "blinkRate": {
+          "type": "condition",
+          "formula": "scene.selectedIndex == 0",
+          "yes": [0.03, 0.02],
+          "no": [1,0]
+        }
+      }
+    ]
+  },
+  "onEnd": [
+    ["next"]
+  ]
+}

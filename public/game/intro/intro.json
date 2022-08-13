@@ -1,0 +1,63 @@
+{
+  "type": "menuScene",
+  "title": "intro",
+  "background": {
+    "type": "image",
+    "path": "intro.png"
+  },
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "start", "x": 32, "y": 40,
+        "blinkRate": {
+          "type": "condition",
+          "formula": "scene.selectedIndex == 0",
+          "yes": [0.03, 0.02],
+          "no": [1,0]
+        }
+      },
+      { "text": "continue", "x": 32, "y": 47,
+        "blinkRate": {
+          "type": "condition",
+          "formula": "scene.selectedIndex == 1",
+          "yes": [0.03, 0.02],
+          "no": [1,0]
+        }
+      },
+      { "text": ">", "x": 26, "y": 40,
+        "blinkRate": {
+          "type": "condition",
+          "formula": "scene.selectedIndex == 0",
+          "yes": [1, 0],
+          "no": [0.7, 0.3]
+        },
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 0"
+        } 
+      },
+      { "text": ">", "x": 26, "y": 47,
+        "blinkRate": {
+          "type": "condition",
+          "formula": "scene.selectedIndex == 1",
+          "yes": [1, 0],
+          "no": [0.7, 0.3]
+        },
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 1"
+        }
+      }
+    ]
+  },
+  "onEnd": [
+    ["wait", 2],
+    ["fade", 0.5],
+    ["next"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/title.mp3"
+  }
+}

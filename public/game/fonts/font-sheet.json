@@ -1,0 +1,12 @@
+{
+  "type": "fontSheet",
+  "asset": {
+    "type": "image",
+    "path": "../letters.png"
+  },
+  "sprite": {
+    "width": 5,
+    "height": 10
+  },
+  "code": "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789>< .,!?"
+}

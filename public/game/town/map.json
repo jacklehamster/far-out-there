@@ -1,0 +1,145 @@
+{
+  "title": "town",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "town.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 21 } }],
+    "portal": "outside"
+  },
+  "tiles": {
+    "[]": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } }],
+      "block": true
+    },
+    "EX": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 20 } }
+      ],
+      "portal": "tunnel"
+    },
+    "IT": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 1 } }
+      ],
+      "portal": "tunnel"
+    },
+    "[/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 2 } }],
+      "portal": "house"
+    },
+    "\\]": { "images":[{ "type": "ref", "path": "tile.json", "params": { "{frame}": 3 } }],
+      "portal": "house"
+    },
+    "/^": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 4 } }
+      ],
+      "block": true
+    },
+    "^\\": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 5 } }
+      ],
+      "block": true
+    },
+    "  ": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } }] },
+    "::": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } }],
+      "block": true
+    },
+    "TT": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 8 } }],
+      "block": true
+    },
+    "__": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } }]
+    },
+    " O": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 10 } }
+      ],
+      "portal": "npc"
+    },
+    " o": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 11 } }
+      ],
+      "block": true
+    },
+    " s": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } }],
+      "startPosition": true
+    },
+    "~/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 12 } }],
+      "portal": "cave"
+    },
+    "\\~": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 13 } }],
+      "portal": "cave"
+    },
+    "/~": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 14 } }
+      ],
+      "block": true
+    },
+    "~\\": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 15 } }
+      ],
+      "block": true
+    },
+    "$/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 16 } }],
+      "portal": "shop"
+    },
+    "\\$": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 17 } }],
+      "portal": "shop"
+    },
+    "/$": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 18 } }
+      ],
+      "block": true
+    },
+    "$\\": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 19 } }
+      ],
+      "block": true
+    },
+    "/S": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 18 } }
+      ],
+      "block": true
+    },
+    "S\\": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 19 } }
+      ],
+      "block": true
+    }
+  },
+  "heroes": [
+    {
+      "type": "hero",
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [0, 3]
+      }
+    }
+  ],
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

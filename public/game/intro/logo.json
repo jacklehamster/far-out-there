@@ -1,0 +1,26 @@
+{
+  "type": "animationScene",
+  "title": "logo",
+  "animation": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "logo.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 8
+  },
+  "onEnd": [
+    ["wait", 3],
+    ["fade", 2],
+    ["next"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/jingle.mp3",
+    "loop": false
+  }
+}
