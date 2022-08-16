@@ -24,16 +24,16 @@ export default class Animation {
     this.flip = flip;
   }
 
-  getLocalFrame(frame: number, totalFrames: number): number {
+  getLocalFrame(frame: number, totalFrames: number, looping = false): number {
     if (!this.range) {
-      return Math.min(frame, totalFrames - 1);
+      return looping ? frame % totalFrames : Math.min(frame, totalFrames - 1);
     }
     const rsize = this.range[1] - this.range[0] + 1;
-    const f = Math.min(frame, rsize - 1);
+    const f = looping ? frame % rsize : Math.min(frame, rsize - 1);
     return this.range[0] + f;
   }
 
-  getCrop(frame: number) {
+  getCrop(frame: number, looping = false) {
     const naturalWidth = this.asset?.image.naturalWidth ?? 0;
     const naturalHeight = this.asset?.image.naturalHeight ?? 0;
     const spriteWidth = this.sprite?.width ?? 0;
@@ -41,7 +41,7 @@ export default class Animation {
     const numCols = spriteWidth ? naturalWidth / spriteWidth : 1;
     const numRows = spriteHeight ? naturalHeight / spriteHeight : 1;
     const totalFrames = this.totalFrames || numCols * numRows;
-    const localFrame = this.getLocalFrame(frame, totalFrames);
+    const localFrame = this.getLocalFrame(frame, totalFrames, looping);
     const col = localFrame % numCols;
     const row = Math.floor(localFrame / numCols);
     this.#tempVar[0] = col * spriteWidth;

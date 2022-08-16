@@ -6,11 +6,15 @@ import { resolve } from "url";
 import Music from "./music";
 import { ReturnData } from "./return-data";
 import Action from "./action";
+import Animation from "./animation";
 
 export enum RenderingStatus {
   RENDERING,
   COMPLETED,
 }
+
+const DEFAULT_CROP = [0, 0, 0, 0];
+
 
 export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T> {
   canvas: HTMLCanvasElement | null;
@@ -372,6 +376,24 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     } else {
       this.addItem(data, item);
       data.message = `You found a ${item}`;
+    }
+  }
+
+  drawAnimation(animation: Animation | undefined,
+    timestamp: DOMHighResTimeStamp,
+    startTime?: DOMHighResTimeStamp,
+    looping: boolean = false,
+    px: number = 0, py: number = 0) {
+    const timeEllapsed = timestamp - (startTime ?? 0);
+    if (this.context && animation?.asset?.image) {
+      const frame = timeEllapsed && animation?.frameRate ? Math.floor(animation.frameRate * timeEllapsed / 1000) : 0;
+      const [sx, sy, width, height] = animation?.getCrop(frame, looping) ?? DEFAULT_CROP;
+      this.context.drawImage(
+        animation.asset.image,
+        sx, sy, width, height,
+        px,
+        py,
+        width, height);
     }
   }
 }  

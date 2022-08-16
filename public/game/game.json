@@ -31,7 +31,8 @@
     { "type": "reference", "path": "maze/dark-cave.json" },
     { "type": "reference", "path": "game-over/guard-to-tunnel.json" },
     { "type": "reference", "path": "game-over/space-out.json" },
-    { "type": "reference", "path": "game-over/game-over.json" }
+    { "type": "reference", "path": "game-over/game-over.json" },
+    { "type": "reference", "path": "battles/battle-bat.json" }
   ],
   "connections": { "type": "ref", "path": "connections/connections.json" },
   "renderers": ["SceneRenderer", "CodeRenderer"]

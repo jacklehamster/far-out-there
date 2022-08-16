@@ -16,6 +16,8 @@ import SlideRenderer from "./types/slide-renderer";
 import md5 from "md5";
 import LoadRenderer from "./types/load-renderer";
 import LoadScene from "../scenes/load-scene";
+import BattleRenderer from "./battle-renderer";
+import BattleScene from "../scenes/battle-scene";
 
 export default class SceneRenderer implements Renderer<App>, SceneChangeListener {
   canvas: HTMLElement | null;
@@ -26,6 +28,7 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
     map: new MapRenderer(),
     maze: new MazeRenderer(),
     load: new LoadRenderer(),
+    battle: new BattleRenderer(),
   };
   rendering: Set<Renderer<any>> = new Set();
   listeners: Set<SceneChangeListener> = new Set();
@@ -106,6 +109,17 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
       case "loadScene": {
         const renderer = this.renderers.load;
         this.hookRendering(renderer, scene as LoadScene);
+        renderer.addCompleteListener({
+          onComplete: (returnData) => this.nextScene(app, returnData),
+          onGoto: (name, returnData, position, direction, tag) => {
+            this.gotoScene(app, name, returnData, position, direction, tag);
+          },
+        });
+        break;
+      }
+      case "battleScene": {
+        const renderer = this.renderers.battle;
+        this.hookRendering(renderer, scene as BattleScene);
         renderer.addCompleteListener({
           onComplete: (returnData) => this.nextScene(app, returnData),
           onGoto: (name, returnData, position, direction, tag) => {

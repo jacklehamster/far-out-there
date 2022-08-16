@@ -1,4 +1,76 @@
 {
   "title": "battle",
-  "type": "battleScene"
+  "type": "battleScene",
+
+  "numOptions": 3,
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "attack", "x": 7, "y": 1,
+        "outline": true
+      },
+      { "text": "block", "x": 7, "y": 8,
+        "outline": true
+      },
+      { "text": "escape", "x": 7, "y": 15,
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 1,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 0"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 8,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 1"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 15,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 2"
+        },
+        "outline": true
+      },
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  
+  "strike": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "sword-strike.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [0, 7]
+  },
+
+  "foe": {
+    "idle": { "type": "ref", "path": "animation.json", "params": { "{range}": [3,3] } },
+    "attack": { "type": "ref", "path": "animation.json", "params": { "{range}": [3,5] } }
+  },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["return"]
+  ],
+  
+  "music": {
+    "type": "music",
+    "path": "../music/battle.mp3"
+  }
 }

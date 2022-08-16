@@ -1,0 +1,13 @@
+{
+  "type": "animation",
+  "asset": {
+    "type": "image",
+    "path": "../town/npc-sheet.png"
+  },
+  "sprite": {
+    "width": 64,
+    "height": 64
+  },
+  "frameRate": 10,
+  "range": "{range}"
+}
