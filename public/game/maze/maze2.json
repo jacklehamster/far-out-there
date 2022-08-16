@@ -1,0 +1,45 @@
+{
+  "title": "cave2",
+  "type": "mazeScene",
+  "grid": {
+    "type": "text",
+    "path": "maze2.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+
+  "sprites": { "type": "ref", "path": "maze-sprites-template.json" },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/cave.mp3"
+  },
+
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+
+  "portal": {
+    "4_10": {
+      "scene": "town",
+      "position": { "x": 7, "y": 8 }
+    }
+  },
+
+  "treasures": {
+    "1_6": "sword"
+  }
+}

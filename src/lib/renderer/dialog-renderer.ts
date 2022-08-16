@@ -29,8 +29,12 @@ export class DialogRenderer {
     }
     const lastLabel = scene.dialog?.labels[scene.dialog.labels.length - 1];
 
+    if (!lastLabel.text && !scene.message) {
+      return true;
+    }
+
     let shift = 0;
-    lastLabel.text.split("").forEach(letter => {
+    (lastLabel.text ?? scene.message).split("").forEach(letter => {
       if (scene.dialog?.fontSheet) {
         const [lx, ly, lw, lh] = scene.dialog.fontSheet.getCropForLetter(letter);
         shift += lw + 1;
@@ -76,7 +80,28 @@ export class DialogRenderer {
     if (dialog) {
       const { labels, fontSheet } = dialog;
       if (fontSheet) {
-        labels?.forEach(label => this.renderLabel(label, fontSheet, menu, timestamp));
+        labels?.forEach(label => {
+          if (this.context) {
+            this.context.save();
+          }
+          this.renderOutline(label, fontSheet, menu, timestamp, menu.message);
+          if (this.context) {
+            this.context.restore();
+          }
+        });
+        labels?.forEach(label => {
+          if (this.context) {
+            this.context.save();
+          }
+          this.renderLabel(label, fontSheet, menu, timestamp, menu.message);
+          if (this.context) {
+            this.context.restore();
+          }
+        });
+      }
+      if (menu.message && this.isCompleted(menu)) {
+        menu.message = undefined;
+        menu.scroll = 0;
       }
     }
   }
@@ -85,26 +110,12 @@ export class DialogRenderer {
     this.removeListener();
   }
 
-  renderLabel(label: Label, fontSheet: FontSheet, menu: CanvasScene, timestamp: DOMHighResTimeStamp) {
-    const { x, y, text, hidden } = label;
-    const blinkRate = Condition.eval(label.blinkRate, { scene: menu });
-    if (blinkRate) {
-      if (!menu.startTime) {
-        menu.startTime = timestamp;
-      }
-      const ellapsed = timestamp - menu.startTime;
-      const progress = ellapsed % ((blinkRate[0] + blinkRate[1]) * 1000);
-      if (progress > blinkRate[0] * 1000) {
-        return;
-      }
-      if (Condition.eval(hidden, { scene: menu })) {
-        return;
-      }
-    }
+  renderOutline(label: Label, fontSheet: FontSheet, menu: CanvasScene, timestamp: DOMHighResTimeStamp, message?: string) {
+    const { x, y, hidden } = label;
+    const text = label.text ?? message;
     let shift = 0;
     if (this.context) {
-      this.context.save();
-      if (label.box) {
+      if ((label.box || label.outline) && text) {
         let minX = Number.MAX_SAFE_INTEGER, minY = Number.MAX_SAFE_INTEGER, maxX = 0, maxY = 0;
         text.split("").forEach(letter => {
           const [, , lw, lh] = fontSheet.getCropForLetter(letter);
@@ -118,47 +129,70 @@ export class DialogRenderer {
         const rectX = minX - 1;
         const rectY = minY;
         const rectWidth = Math.min(maxX - minX, label.width ?? maxX - minX) + 2;
-        const rectHeight = Math.min(maxY - minY, label.height ?? maxY - minY) + 5;
+        const rectHeight = Math.min(maxY - minY, label.height ?? maxY - minY) + (label.box ? 5 : 2);
         this.context.fillRect(rectX, rectY, rectWidth, rectHeight);
 
-        const completed = this.isCompleted(menu);
-        if (!completed) {
-          this.addListener(menu);
-        } else {
-          this.removeListener();
-        }
-
-        if (timestamp % 450 < 300 && !menu.scrollStart && !completed) {
-          this.context.fillStyle = "white";
-          this.context.lineWidth = 1;
-          this.context.beginPath();
-          this.context.moveTo(rectX + rectWidth - 1, rectY + rectHeight - 4);
-          this.context.lineTo(rectX + rectWidth - 3.5, rectY + rectHeight - 1.5);
-          this.context.lineTo(rectX + rectWidth - 6, rectY + rectHeight - 4);
-          this.context.closePath();
-          this.context.fill();
-        }
-
-        if (label.width && label.height) {
-          this.context.beginPath();
-          this.context.moveTo(x, y);
-          this.context.lineTo(x + label.width, y);
-          this.context.lineTo(x + label.width, y + label.height);
-          this.context.lineTo(x, y + label.height);
-          this.context.closePath();
-          this.context.clip();
+        if (label.box) {
+          const completed = this.isCompleted(menu);
+          if (!completed) {
+            this.addListener(menu);
+          } else {
+            this.removeListener();
+          }
+          if (timestamp % 450 < 300 && !menu.scrollStart && !completed) {
+            this.context.fillStyle = "white";
+            this.context.lineWidth = 1;
+            this.context.beginPath();
+            this.context.moveTo(rectX + rectWidth - 1, rectY + rectHeight - 4);
+            this.context.lineTo(rectX + rectWidth - 3.5, rectY + rectHeight - 1.5);
+            this.context.lineTo(rectX + rectWidth - 6, rectY + rectHeight - 4);
+            this.context.closePath();
+            this.context.fill();
+          }
         }
       }
-      shift = 0;
-      text.split("").forEach(letter => {
-        if (this.context && fontSheet.asset?.image) {
-          const [lx, ly, lw, lh] = fontSheet.getCropForLetter(letter);
-          this.context.drawImage(fontSheet.asset?.image, lx, ly, lw, lh,
-            x + shift - this.getActualScroll(menu, timestamp), y, lw, lh);
-          shift += lw + 1;
-        }
-      });
-      this.context.restore();
+    }
+  }
+
+  renderLabel(label: Label, fontSheet: FontSheet, menu: CanvasScene, timestamp: DOMHighResTimeStamp, message?: string) {
+    const { x, y, hidden } = label;
+    const text = label.text ?? message;
+    const blinkRate = Condition.eval(label.blinkRate, { scene: menu });
+    if (blinkRate) {
+      if (!menu.startTime) {
+        menu.startTime = timestamp;
+      }
+      const ellapsed = timestamp - menu.startTime;
+      const progress = ellapsed % ((blinkRate[0] + blinkRate[1]) * 1000);
+      if (progress > blinkRate[0] * 1000) {
+        return;
+      }
+    }
+    if (Condition.eval(hidden, { scene: menu })) {
+      return;
+    }
+    let shift = 0;
+    if (this.context) {
+      if (label.width && label.height) {
+        this.context.beginPath();
+        this.context.moveTo(x, y);
+        this.context.lineTo(x + label.width, y);
+        this.context.lineTo(x + label.width, y + label.height);
+        this.context.lineTo(x, y + label.height);
+        this.context.closePath();
+        this.context.clip();
+      }
+      if (text) {
+        shift = 0;
+        text.split("").forEach(letter => {
+          if (this.context && fontSheet.asset?.image) {
+            const [lx, ly, lw, lh] = fontSheet.getCropForLetter(letter);
+            this.context.drawImage(fontSheet.asset?.image, lx, ly, lw, lh,
+              x + shift - this.getActualScroll(menu, timestamp), y, lw, lh);
+            shift += lw + 1;
+          }
+        });
+      }
     }
   }
 }

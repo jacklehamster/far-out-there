@@ -1,0 +1,24 @@
+{
+  "title": "airport",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "airport.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 21 } }],
+    "portal": "tunnel"
+  },
+  "tiles": { "type": "ref", "path": "town-tiles.json" },
+  "heroes": { "type": "ref", "path": "heroes.json" },
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

@@ -5,6 +5,7 @@ import { Renderer } from "../renderer";
 import { resolve } from "url";
 import Music from "./music";
 import { ReturnData } from "./return-data";
+import Action from "./action";
 
 export enum RenderingStatus {
   RENDERING,
@@ -18,6 +19,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
   listeners: Set<CompleteListener> = new Set<CompleteListener>();
   dialogRenderer: DialogRenderer = new DialogRenderer();
   audio: HTMLAudioElement | null;
+  saveTimeout: any;
 
   constructor() {
     this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -54,6 +56,87 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     delete data.scrollStart;
     delete data.scrollBackwards;
     delete data.destination;
+
+    const persist = JSON.parse(localStorage.getItem(`persist_game`) ?? "{}");
+    data.persist = persist;
+  }
+
+  saveProp(data: T, prop: string, value: any) {
+    if (!data.persist) {
+      return;
+    }
+    const sceneData = data.persist[data.title ?? ''] ?? (data.persist[data.title ?? ''] = {});
+    sceneData[prop] = value;
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+  }
+
+  getProp(data: T, prop: string) {
+    return data?.persist?.[data.title ?? '']?.[prop];
+  }
+
+  saveStats(data: T, hp: number, max: number) {
+    if (!data.persist) {
+      return;
+    }
+    const gameData = data.persist.game ?? (data.persist.game = {});
+    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0 });
+    stats.max = max;
+    stats.hp = Math.max(0, Math.min(hp, max));
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+  }
+
+  addHp(data: T, hp: number) {
+    this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) + hp, data.persist?.game.stats?.max ?? 0);
+  }
+
+  removeHp(data: T, hp: number) {
+    this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) - hp, data.persist?.game.stats?.max ?? 0);
+  }
+
+  saveGameProp(data: T, prop: string, value: any) {
+    if (!data.persist) {
+      return;
+    }
+    const gameData = data.persist?.game ?? (data.persist.game = {});
+    gameData[prop] = value;
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+  }
+
+  addItem(data: T, item: string) {
+    if (!data.persist) {
+      return;
+    }
+    const gameData = data.persist.game ?? (data.persist.game = {});
+    const inventory = gameData.inventory ?? (gameData.inventory = {});
+    inventory[item] = (inventory[item] ?? 0) + 1;
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+  }
+
+  removeItem(data: T, item: string) {
+    if (!data.persist) {
+      return;
+    }
+    const gameData = data.persist.game ?? (data.persist.game = {});
+    const inventory = gameData.inventory ?? (gameData.inventory = {});
+    inventory[item] = (inventory[item] ?? 0) - 1;
+    if (inventory[item] < 0) {
+      delete inventory[item];
+    }
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+  }
+
+  saveTime(data: T) {
+    if (!data.persist) {
+      return;
+    }
+    const sceneData = data.persist.game ?? (data.persist.game = {});
+    sceneData.saveTime = new Date().getTime();
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
   }
 
   render(data: T): void {
@@ -73,11 +156,18 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     return RenderingStatus.RENDERING;
   }
 
+  performStart(data: T) {
+    data.onStart?.forEach(action => {
+      this.performAction(data, action);
+    });
+  }
+
   startLoop(data: T): void {
     const loop = (timestamp: DOMHighResTimeStamp): void => {
       this.requestID = requestAnimationFrame(loop);
       if (!data.startTime) {
         data.startTime = timestamp;
+        this.performStart(data);
       }
       const status = this.performRendering(data, timestamp);
       if (data.dialog) {
@@ -86,11 +176,28 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
 
       this.applyFade(data, timestamp);
 
+      this.applyItemUpdate(data);
+
       if (status === RenderingStatus.COMPLETED) {
         this.performCompletionSteps(data, timestamp);
       }
     };
     this.requestID = requestAnimationFrame(loop);
+  }
+
+  applyItemUpdate(data: T): void {
+    if (data.itemBonus) {
+      data.itemBonus?.forEach(item => {
+        this.addItem(data, item);
+      });
+      delete data.itemBonus;
+    }
+    if (data.itemRemove) {
+      data.itemRemove?.forEach(item => {
+        this.removeItem(data, item);
+      });
+      delete data.itemRemove;
+    }
   }
 
   startFade(data: T, timestamp: DOMHighResTimeStamp) {
@@ -137,6 +244,13 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
             delete data.stepProgress;
             data.step++;
           }
+          break;
+        case "hideLoading":
+          const loadingText = document.getElementById("loadingText");
+          if (loadingText) {
+            loadingText.style.display = "none";
+          }
+          data.step++;
           break;
         case "next":
           {
@@ -185,13 +299,79 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
   }
 
-  saveReturnData(data: T): ReturnData | undefined {
-    return undefined;
+  saveReturnData(data: T): ReturnData {
+    return { scene: data.title };
   }
 
   stopRendering() {
     this.context?.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
     cancelAnimationFrame(this.requestID);
     this.dialogRenderer.stopRendering();
+  }
+
+  autoSave(data: T) {
+    clearTimeout(this.saveTimeout);
+    this.saveTimeout = setTimeout(() => {
+      const returnData = this.saveReturnData(data);
+      this.saveGameProp(data, "returnData", returnData);
+    }, 1000);
+  }
+
+  performAction(data: T, action?: Action) {
+    if (!action) {
+      return;
+    }
+    if (action.itemsForbidden?.some(item => data.persist?.game?.inventory?.[item])) {
+      return;
+    }
+    if (action.itemsRequired && !action.itemsRequired?.some(item => data.persist?.game?.inventory?.[item])) {
+      return;
+    }
+    if (action?.message) {
+      data.message = action.message;
+    }
+    if (action?.itemBonus) {
+      data.itemBonus = action?.itemBonus;
+    }
+    if (action?.itemRemove) {
+      data.itemRemove = action?.itemRemove;
+    }
+
+    switch (action?.action) {
+      case "clearCache":
+        localStorage.removeItem("persist_game");
+        break;
+      case "goto":
+        data.destination = action.destination?.scene;
+        data.destinationDirection = action.destination?.direction;
+        data.destinationPosition = action.destination?.position;
+        break;
+      case "showStats":
+        const stats = data.persist?.game.stats ?? { hp: 0, max: 0 };
+        data.message = `HP: ${stats.hp} / ${stats.max}. ATK: ${this.getAttack(data)}`;
+        break;
+      case "showInventory":
+        const items = Object.keys(data.persist?.game?.inventory ?? {}).filter(item => {
+          return data.persist?.game?.inventory?.[item];
+        });
+        data.message = items.length ? items.join(", ") : "No items.";
+        break;
+      case "saveStats":
+        this.saveStats(data, 100, 100);
+        break;
+    }
+  }
+
+  getAttack(data: T) {
+    return data.persist?.game.inventory?.["sword"] ? 10 : 2;
+  }
+
+  pickItem(data: T, item?: string) {
+    if (!item) {
+      data.message = `The chest is empty.`;
+    } else {
+      this.addItem(data, item);
+      data.message = `You found a ${item}`;
+    }
   }
 }  

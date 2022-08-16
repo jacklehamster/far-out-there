@@ -1,3 +1,4 @@
+import Action from "../renderer/types/action";
 import BlobType from "../renderer/types/blob";
 import CanvasScene from "./canvas-scene";
 
@@ -7,4 +8,5 @@ export default class MenuScene extends CanvasScene {
   menuIndex?: number;
   selectedIndex?: number;
   numOptions?: number;
+  actions?: Action[];
 }

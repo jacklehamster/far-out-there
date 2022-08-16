@@ -1,0 +1,63 @@
+{
+  "title": "tunnel",
+  "type": "mazeScene",
+  "grid": {
+    "type": "text",
+    "path": "tunnel.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+
+  "sprites": { "type": "ref", "path": "maze-sprites-template.json" },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/cave.mp3"
+  },
+
+  "portal": {
+    "4_23": {
+      "scene": "town",
+      "position": { "x": 3, "y": 4 }
+    },
+    "4_0": {
+      "scene": "airport"
+    }
+  },
+
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+
+  "events": {
+    "4_4": [{
+      "message": "You may proceed.",
+      "itemsRequired": ["passport"]
+    }, {
+      "action": "goto",
+      "message": "You cannot continue without a passport.",
+      "itemsForbidden": ["passport"],
+      "destination": {
+        "scene": "town",
+        "position": { "x": 3, "y": 4 }
+      }
+    }]
+  },
+
+  "treasures": {
+    "6_9": "lamp"
+  }
+}

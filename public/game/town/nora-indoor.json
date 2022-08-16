@@ -1,0 +1,92 @@
+{
+  "type": "slideScene",
+  "title": "nora-indoor",
+
+  "onStart": [
+    {
+      "message": "Welcome stranger! I've prepared some tea. Would you like some?",
+      "itemsForbidden": [
+        "letter", "passport"
+      ]
+    },
+    {
+      "message": "What is this? Another love letter from that old fool! Geez, if you needed a fake passport, all you needed is to ask. I'll get one ready for ya.",
+      "itemsRequired": [
+        "letter"
+      ],
+      "itemBonus": ["passport"],
+      "itemRemove": ["letter"]
+    },
+    {
+      "message": "Did you try using the passport? Looks pretty legit, right?",
+      "itemsRequired": [
+        "passport"
+      ]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/indoors.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [10, 10]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/outside.mp3"
+  }
+}

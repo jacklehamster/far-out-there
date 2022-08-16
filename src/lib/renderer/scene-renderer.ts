@@ -14,6 +14,8 @@ import MenuRenderer from "./types/menu-renderer";
 import { ReturnData } from "./types/return-data";
 import SlideRenderer from "./types/slide-renderer";
 import md5 from "md5";
+import LoadRenderer from "./types/load-renderer";
+import LoadScene from "../scenes/load-scene";
 
 export default class SceneRenderer implements Renderer<App>, SceneChangeListener {
   canvas: HTMLElement | null;
@@ -23,6 +25,7 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
     slide: new SlideRenderer(),
     map: new MapRenderer(),
     maze: new MazeRenderer(),
+    load: new LoadRenderer(),
   };
   rendering: Set<Renderer<any>> = new Set();
   listeners: Set<SceneChangeListener> = new Set();
@@ -100,6 +103,17 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
         });
         break;
       }
+      case "loadScene": {
+        const renderer = this.renderers.load;
+        this.hookRendering(renderer, scene as LoadScene);
+        renderer.addCompleteListener({
+          onComplete: (returnData) => this.nextScene(app, returnData),
+          onGoto: (name, returnData, position, direction, tag) => {
+            this.gotoScene(app, name, returnData, position, direction, tag);
+          },
+        });
+        break;
+      }
     }
   }
 
@@ -117,7 +131,7 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
 
   nextScene(app: App, returnData?: ReturnData) {
     app.sceneIndex = (app.sceneIndex ?? 0) + 1;
-    if (app.scenes) {
+    if (app.scenes?.[app.sceneIndex]) {
       app.scenes[app.sceneIndex].returnData = returnData;
     }
     this.listeners.forEach(listener => listener.onChange(app, false));

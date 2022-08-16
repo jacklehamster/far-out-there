@@ -9,6 +9,18 @@ export interface Dialog {
   fontSheet?: FontSheet;
 }
 
+export interface PersistData {
+  game: {
+    stats?: {
+      hp: number;
+      max: number;
+    }
+    inventory?: Record<string, number>;
+    [key: string]: any;
+  }
+  [key: string]: any;
+}
+
 export default class CanvasScene extends Scene {
   step?: number;
   stepProgress?: any;
@@ -17,4 +29,9 @@ export default class CanvasScene extends Scene {
   scroll?: number;
   scrollStart?: DOMHighResTimeStamp;
   scrollBackwards?: boolean;
+  message?: string;
+  persist?: PersistData;
+
+  itemBonus?: string[];
+  itemRemove?: string[];
 }

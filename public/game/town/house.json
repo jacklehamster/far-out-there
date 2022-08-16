@@ -1,6 +1,30 @@
 {
   "type": "slideScene",
   "title": "house",
+
+  "onStart": [
+    {
+      "message": "What are you doing in my house? Get out!",
+      "itemsForbidden": [
+        "watermelon", "letter"
+      ]
+    },
+    {
+      "message": "Oh... a watermelon! Is that for me?... Thank you! Take this letter to my friend Nora pass the outer cave. She'll hook you up with a fake passport.",
+      "itemsRequired": [
+        "watermelon"
+      ],
+      "itemBonus": ["letter"],
+      "itemRemove": ["watermelon"]
+    },
+    {
+      "message": "Go take that letter to Nora, she'll help you out.",
+      "itemsRequired": [
+        "letter"
+      ]
+    }
+  ],
+
   "slides": [{
     "type": "slide",
     "animation": {
@@ -51,7 +75,6 @@
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
       {
-        "text": "What are you doing in my house? Get out!",
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true

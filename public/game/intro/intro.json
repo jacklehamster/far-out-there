@@ -51,6 +51,10 @@
       }
     ]
   },
+  "actions": [
+    { "action": "clearCache" },
+    null
+  ],
   "onEnd": [
     ["wait", 2],
     ["fade", 0.5],

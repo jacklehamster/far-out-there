@@ -12,6 +12,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
 
   reset(data: MazeScene): void {
     super.reset(data);
+    delete data.direction;
     delete data.moveAction;
     delete data.openAction;
     delete data.position;
@@ -65,9 +66,10 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
     };
   }
 
-  saveReturnData(data: MazeScene): ReturnData | undefined {
+  saveReturnData(data: MazeScene): ReturnData {
     return {
       scene: data.title,
+      subtitle: data.subtitle,
       position: {
         x: data.position?.x ?? 0,
         y: data.position?.y ?? 0,
@@ -184,35 +186,91 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
     if (!data.moveAction || !data.position) {
       return false;
     }
+    if (data.message) {
+      return false;
+    }
     const forward = this.getForwardCoordinates(data.direction);
     const mul = data.moveAction.y;
     const cellEnteredCoordinates = { x: forward.x * mul, y: forward.y * mul };
     const gridBlock = data.grid?.[data.position.y + cellEnteredCoordinates.y]?.[data.position.x + cellEnteredCoordinates.x];
-    return !this.isBlock(gridBlock);
+    return !this.isBlock(gridBlock) && gridBlock !== " $";
   }
 
   canTurn(data: MazeScene) {
     if (data.destination) {
       return false;
     }
+    if (data.message) {
+      return false;
+    }
     return true;
   }
 
   canOpen(data: MazeScene) {
-    if (data.destination || data.openedDoor) {
+    if (data.destination || data.opened) {
       return false;
     }
-    return this.isFrontDoor(data);
+    if (data.message) {
+      return false;
+    }
+    return this.isFrontDoor(data) || this.isFrontChest(data);
+  }
+
+  getFrontPosition(data: MazeScene) {
+    const forward = this.getForwardCoordinates(data.direction);
+    const cellEnteredCoordinates = { x: forward.x, y: forward.y };
+    const x = (data.position?.x ?? 0) + cellEnteredCoordinates.x;
+    const y = (data.position?.y ?? 0) + cellEnteredCoordinates.y;
+    const tag = `${x}_${y}`;
+    return { x, y, tag };
   }
 
   isFrontDoor(data: MazeScene) {
     if (!data.position) {
       return false;
     }
-    const forward = this.getForwardCoordinates(data.direction);
-    const cellEnteredCoordinates = { x: forward.x, y: forward.y };
-    const gridBlock = data.grid?.[data.position.y + cellEnteredCoordinates.y]?.[data.position.x + cellEnteredCoordinates.x];
-    return gridBlock === "DD";
+    const { x, y } = this.getFrontPosition(data);
+    return data.grid?.[y]?.[x] === "DD";
+  }
+
+  isFrontStairs(data: MazeScene) {
+    if (!data.position) {
+      return false;
+    }
+    const { x, y } = this.getFrontPosition(data);
+    return data.grid?.[y]?.[x] === "EX";
+  }
+
+  isFrontChest(data: MazeScene) {
+    if (!data.position) {
+      return false;
+    }
+    const { x, y } = this.getFrontPosition(data);
+    return data.grid?.[y]?.[x] === " $";
+  }
+
+  isFrontGuard(data: MazeScene) {
+    if (!data.position) {
+      return false;
+    }
+    const { x, y } = this.getFrontPosition(data);
+    return data.grid?.[y]?.[x] === " G";
+  }
+
+  onChangeCell(data: MazeScene) {
+    delete data.blocks;
+    delete data.opened;
+    const { tag } = this.getFrontPosition(data);
+    if (this.isFrontChest(data)) {
+      data.opened = this.getProp(data, `chest_${tag}_opened`);
+      console.log("Chest", tag);
+    }
+
+    data.events?.[tag]?.forEach(action => {
+      this.performAction(data, action);
+    });
+
+    this.autoSave(data);
   }
 
   performRendering(data: MazeScene, timestamp: DOMHighResTimeStamp): RenderingStatus {
@@ -236,12 +294,27 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
 
     if (!data.moveTime && !data.turnTime && !data.openTime) {
       if (data.moveAction?.y) {
-        if (data.moveAction?.y > 0 && this.isFrontDoor(data) && data.openedDoor) {
-          data.destination = data.title;
-          data.destinationDirection = data.direction;
-          const forward = this.getForwardCoordinates(data.direction);
-          data.destinationPosition = { x: data.position.x + forward.x * 2, y: data.position.y + forward.y * 2 };
+        if (data.moveAction?.y > 0) {
+          if (this.isFrontDoor(data) && data.opened) {
+            data.destination = data.title;
+            data.destinationDirection = data.direction;
+            const forward = this.getForwardCoordinates(data.direction);
+            data.destinationPosition = { x: data.position.x + forward.x * 2, y: data.position.y + forward.y * 2 };
+          }
+
+          if (this.isFrontStairs(data)) {
+            const { tag } = this.getFrontPosition(data);
+            const dest = data.portal?.[tag];
+            if (dest) {
+              data.destination = dest.scene;
+              data.destinationPosition = dest.position;
+              data.destinationDirection = dest.direction;
+            } else {
+              console.log("No portal for: ", tag);
+            }
+          }
         }
+
         if (this.canMove(data)) {
           data.moveTime = timestamp + 1;
           data.moveDirection = data.moveAction.y > 0 ? "FORWARD" : "BACKWARD";
@@ -249,8 +322,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
             const forward = this.getForwardCoordinates(data.direction);
             data.position.x -= forward.x;
             data.position.y -= forward.y;
-            delete data.blocks;
-            delete data.openedDoor;
+            this.onChangeCell(data);
           }
         }
       }
@@ -280,8 +352,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
           const forward = this.getForwardCoordinates(data.direction);
           data.position.x += forward.x;
           data.position.y += forward.y;
-          delete data.blocks;
-          delete data.openedDoor;
+          this.onChangeCell(data);
         }
       } else {
         if (moveTimeProgress < 3) {
@@ -304,15 +375,22 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
       }
     }
 
-    let openIndex = data.openedDoor ? 2 : 0;
+    let openIndex = data.opened ? 2 : 0;
     if (data.openTime) {
       const openTimeProgress = Math.ceil((timestamp - data.openTime) / (data.openDuration ?? 100));
       if (openTimeProgress < 2) {
         openIndex = openTimeProgress;
       } else {
         delete data.openTime;
-        data.openedDoor = true;
+        data.opened = true;
         openIndex = 2;
+
+        if (this.isFrontChest(data)) {
+          const { tag } = this.getFrontPosition(data);
+          this.saveProp(data, `chest_${tag}_opened`, true);
+
+          this.pickItem(data, data.treasures?.[tag]);
+        }
       }
     }
 
@@ -322,7 +400,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
 
     this.drawBlocks(data, timestamp, moveIndex, turnIndex, openIndex);
 
-    return data.destination ? RenderingStatus.COMPLETED : RenderingStatus.RENDERING;
+    return data.destination && !data.message ? RenderingStatus.COMPLETED : RenderingStatus.RENDERING;
   }
 
   drawBackground(data: MazeScene, timestamp: DOMHighResTimeStamp, moveIndex: number, turnIndex: number) {
@@ -339,6 +417,14 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
 
   isExit(block: string) {
     return block === "EX" || block === "DD";
+  }
+
+  isChest(block: string) {
+    return block === " $";
+  }
+
+  isGuard(block: string) {
+    return block === " G";
   }
 
   drawBlocks(data: MazeScene, timestamp: DOMHighResTimeStamp, moveIndex: number, turnIndex: number, openIndex: number) {
@@ -381,12 +467,16 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
             if (this.isExit(midBlock)) {
               this.drawAnimation(data.sprites?.walls?.exit?.[i]?.[moveIndex], timestamp);
             }
-            if (i === 1 && moveIndex === 0) {
-              if (midBlock === "EX") {
-                this.drawAnimation(data.sprites?.walls?.stairs, timestamp);
-              } else if (midBlock === "DD") {
-                this.drawAnimation(data.sprites?.walls?.door[openIndex], timestamp);
-              }
+          }
+          if (i === 1 && moveIndex === 0) {
+            if (midBlock === "EX") {
+              this.drawAnimation(data.sprites?.walls?.stairs, timestamp);
+            } else if (midBlock === "DD") {
+              this.drawAnimation(data.sprites?.walls?.door[openIndex], timestamp);
+            } else if (this.isChest(midBlock)) {
+              this.drawAnimation(data.sprites?.walls?.chest[openIndex], timestamp);
+            } else if (this.isGuard(midBlock)) {
+              this.drawAnimation(data.sprites?.walls?.guard, timestamp);
             }
           }
         }

@@ -42,6 +42,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
           data.moveAction.y = 1;
           break;
         case "Space":
+          this.performAction(data, data.spaceAction);
           break;
         case "ArrowLeft":
         case "KeyA":
@@ -57,9 +58,10 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
     };
   }
 
-  saveReturnData(data: MapScene): ReturnData | undefined {
+  saveReturnData(data: MapScene): ReturnData {
     return {
       scene: data.title,
+      subtitle: data.subtitle,
       position: {
         x: data.heroes[0].fromPosition?.x,
         y: data.heroes[0].fromPosition?.y,
@@ -96,9 +98,11 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
       if (underTile?.portal) {
         data.destination = underTile.portal;
         data.destinationPosition = underTile.portalPosition;
+        data.destinationDirection = underTile.portalDirection;
       } else if (data.moveAction.x || data.moveAction.y) {
         if (mainHero.canMoveBy(data.moveAction.x, data.moveAction.y, data)) {
           mainHero.moveBy(data.moveAction.x, data.moveAction.y, timestamp);
+          this.autoSave(data);
         }
       }
     }

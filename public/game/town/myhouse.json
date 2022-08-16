@@ -1,0 +1,47 @@
+{
+  "type": "slideScene",
+  "title": "myhouse",
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "indoors.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "text": "This is the house of Blunk",
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

@@ -1,3 +1,4 @@
+import Action from "../renderer/types/action";
 import Music from "../renderer/types/music";
 import { ReturnData } from "../renderer/types/return-data";
 import { Position } from "../scenes/slide-scene";
@@ -16,4 +17,5 @@ export default class Scene {
   returnData?: ReturnData;
   returnPosition?: Position;
   returnDirection?: number;
+  onStart?: Action[];
 }

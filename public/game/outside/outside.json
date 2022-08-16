@@ -11,73 +11,7 @@
   "defaultTile": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 6 } }],
       "block": true
   },
-  "tiles": {
-    "[1": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 0 } }],
-      "portal": "town", "portalPosition": {"x": 6, "y": 15}
-    },
-    "2]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 1 } }],
-      "portal": "town", "portalPosition": {"x": 6, "y": 15}
-    },
-    "[3": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 10 } }],
-      "portal": "town", "portalPosition": {"x": 6, "y": 15}
-    },
-    "4]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 11 } }],
-      "portal": "town", "portalPosition": {"x": 6, "y": 15}
-    },
-    " s": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 3 } }],
-      "startPosition": true
-    },
-    "^u": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 4 } }],
-      "block": true
-    },
-    "u^": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 5 } }],
-      "block": true
-    },
-    "^^": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 14 } }],
-      "block": true
-    },
-    "uu": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 15 } }],
-      "block": true
-    },
-    "~~": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 6 } }],
-      "block": true
-    },
-    "-~": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 7 } }],
-      "block": true
-    },
-    "~-": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 16 } }],
-      "block": true
-    },
-    "--": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 17 } }],
-      "block": true
-    },
-    "..": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 2 } }] },
-    "  ": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 3 } }] },
-    ". ": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 12 } }] },
-    " .": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 13 } }] },
-    "||": { "images": [
-        { "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 20 } }
-      ],
-      "block": "true"
-    },
-    "~/": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 12 } }],
-      "portal": "cave"
-    },
-    "\\~": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 13 } }],
-      "portal": "cave"
-    },
-    "/~": { "images": [
-        { "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 14 } },
-        { "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 14 } }
-      ],
-      "block": true
-    },
-    "~\\": { "images": [
-        { "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 14 } },
-        { "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 15 } }
-      ]
-    }
-  },
+  "tiles": { "type": "ref", "path": "outside-tiles.json" },
   "heroes": [
     {
       "type": "hero",

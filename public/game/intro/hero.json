@@ -1,6 +1,13 @@
 {
   "type": "slideScene",
   "title": "hero",
+
+  "onStart": [
+    {
+      "action": "saveStats"
+    }
+  ],
+
   "slides": [{
     "type": "slide",
     "asset": {

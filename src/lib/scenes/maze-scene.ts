@@ -1,4 +1,6 @@
+import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
+import { ReturnData } from "../renderer/types/return-data";
 import CanvasScene from "./canvas-scene";
 import { Position } from "./slide-scene";
 
@@ -26,7 +28,7 @@ export default class MazeScene extends CanvasScene {
   openDuration?: number;
   openTime?: number;
 
-  openedDoor?: boolean;
+  opened?: boolean;
 
   blocks?: [
     [string, string, string, string, string],
@@ -34,6 +36,8 @@ export default class MazeScene extends CanvasScene {
     [string, string, string, string, string],
     [string, string, string, string, string],
   ];
+
+  portal?: Record<string, ReturnData>;
 
   sprites?: {
     background: {
@@ -67,6 +71,8 @@ export default class MazeScene extends CanvasScene {
       ];
       door: [Anim, Anim, Anim];
       stairs: Anim;
+      chest: [Anim, Anim, Anim];
+      guard: Anim;
     };
     corners?: {
       close: {
@@ -80,4 +86,8 @@ export default class MazeScene extends CanvasScene {
       };
     }
   }
+
+  treasures?: Record<string, string | undefined>;
+
+  events?: Record<string, Action[]>;
 }

@@ -1,0 +1,63 @@
+{
+  "type": "menuScene",
+  "title": "town-menu",
+  "background": {
+    "type": "image",
+    "path": "../intro/scenery.png"
+  },
+  "numOptions": 3,
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "stats", "x": 7, "y": 1,
+        "outline": true
+      },
+      { "text": "items", "x": 7, "y": 8,
+        "outline": true
+      },
+      { "text": "exit", "x": 7, "y": 15,
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 1,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 0"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 8,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 1"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 15,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 2"
+        },
+        "outline": true
+      },
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "actions": [
+    { "action": "showStats"},
+    { "action": "showInventory" },
+    null
+  ],
+  "onEnd": [
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

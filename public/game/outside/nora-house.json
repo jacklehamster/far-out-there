@@ -1,0 +1,41 @@
+{
+  "title": "nora-house",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "nora-house.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 6 } }],
+      "block": true
+  },
+  "tiles": { "type": "ref", "path": "outside-tiles.json" },
+  "heroes": [
+    {
+      "type": "hero",
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [0, 3]
+      }
+    }
+  ],
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/outside.mp3"
+  }
+}

@@ -13,7 +13,7 @@ export default class MenuRenderer extends KeyboardRenderer<MenuScene> {
     if (data.background?.image) {
       this.context?.drawImage(data.background?.image, 0, 0);
     }
-    return data.selectedIndex === undefined ? RenderingStatus.RENDERING : RenderingStatus.COMPLETED;
+    return data.selectedIndex === undefined || data.message ? RenderingStatus.RENDERING : RenderingStatus.COMPLETED;
   }
 
   createKeyHandlerDown(data: MenuScene): (e: KeyboardEvent) => void {
@@ -22,15 +22,16 @@ export default class MenuRenderer extends KeyboardRenderer<MenuScene> {
       switch (e.code) {
         case "KeyW":
         case "ArrowUp":
-          data.menuIndex = ((data.menuIndex ?? 0) + 1) % numOptions;
+          data.menuIndex = ((data.menuIndex ?? 0) - 1) % numOptions;
           break;
         case "KeyS":
         case "ArrowDown":
-          data.menuIndex = ((data.menuIndex ?? 0) - 1 + 2) % numOptions;
+          data.menuIndex = ((data.menuIndex ?? 0) + 1 + numOptions) % numOptions;
           break;
         case "Space":
           data.selectedIndex = data.menuIndex;
           this.unregisterListener();
+          this.performAction(data, data.actions?.[data.selectedIndex ?? -1]);
           break;
       }
     };

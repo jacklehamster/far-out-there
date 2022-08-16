@@ -8,21 +8,20 @@
 	</head>
 	<body>
 		<div id="container" style="height: 100%">
-			<div id="toolbar"></div>
+			<div id="loadingText" style="position: absolute">Game loading...</div>
 			<div style="display: flex; gap: 10px; flex-direction: row;">
-				<canvas id="canvas" width="64" height="64" style="width: 512px; height: 512px; border: 2px solid black;"></canvas>
+				<canvas id="canvas" width="64" height="64" style="width: 384; height: 384px; border: 2px solid black;"></canvas>
 				<div>
 					<div>
 						<label for="code">Data:</label>
 						<br>
-						<textarea class="codebox" id="code" style="width: 400px; height: 400px"></textarea>
+						<textarea class="codebox" id="code" style="width: 500px; height: 360px"></textarea>
 					</div>
-					<p>
-						<button class="button">update</button>
-					</p>
 				</div>
 			</div>
 			<audio id="audio" loop autoplay></audio>
+			<br><br>
+			<div id="toolbar"></div>
 		</div>
 	</body>
 </html>

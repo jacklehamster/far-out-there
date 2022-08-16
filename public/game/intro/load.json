@@ -1,0 +1,11 @@
+{
+  "type": "loadScene",
+  "title": "load",
+  "music": {
+    "type": "music",
+    "path": "../music/title.mp3"
+  },
+  "onEnd": [
+    ["goto"]
+  ]
+}

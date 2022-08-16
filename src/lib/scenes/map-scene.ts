@@ -1,3 +1,4 @@
+import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
 import Hero from "../renderer/types/hero";
 import CanvasScene from "./canvas-scene";
@@ -9,6 +10,7 @@ export interface Tile {
   block?: boolean;
   portal?: string;
   portalPosition?: Position;
+  portalDirection?: number;
 }
 
 export default class MapScene extends CanvasScene {
@@ -20,4 +22,5 @@ export default class MapScene extends CanvasScene {
   defaultTile?: Tile;
   heroes: Hero[] = [];
   moveAction?: Position;
+  spaceAction?: Action;
 }

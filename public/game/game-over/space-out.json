@@ -1,0 +1,39 @@
+{
+  "type": "slideScene",
+  "title": "space-out",
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "../intro/space.png"
+    },
+    "from": {
+      "x": 0,
+      "y": -16
+    },
+    "to": {
+      "x": 0,
+      "y": -16
+    },
+    "duration": 3
+  },{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "../town/spaceship.png"
+    },
+    "from": {
+      "x": 20,
+      "y": 32
+    },
+    "to": {
+      "x": 20,
+      "y": -20
+    },
+    "duration": 3
+  }],
+  "onEnd": [
+    ["wait", 2],
+    ["next"]
+  ]
+}

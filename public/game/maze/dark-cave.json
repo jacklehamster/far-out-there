@@ -1,0 +1,68 @@
+{
+  "title": "dark-cave",
+  "type": "slideScene",
+  "gridWidth": 10,
+  "gridHeight": 10,
+
+  "onStart": [
+    {
+      "action": "goto",
+      "destination": {
+        "scene": "cave",
+        "position": { "x": 4, "y": 10 },
+        "direction": 0
+      },
+      "message": "You use the lamp.",
+      "itemsRequired": [
+        "lamp"
+      ]
+    },
+    {
+      "action": "goto",
+      "destination": {
+        "scene": "outside",
+        "position": { "x": 8, "y": 6 }
+      },
+      "message": "The cave is too dark.",
+      "itemsForbidden": [
+        "lamp"
+      ]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "dark.png"
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],  
+
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["goto"]
+  ],
+
+  "music": {
+    "type": "music",
+    "path": "../music/cave.mp3"
+  }
+}

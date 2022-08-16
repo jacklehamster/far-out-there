@@ -9,121 +9,7 @@
   "gridWidth": 10,
   "gridHeight": 10,
 
-  "sprites": {
-    "background": {
-      "move": [
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 0 } },
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 1 } },
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 2 } }
-      ],
-      "rotate": { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 3 } }
-    },
-    "walls": {
-      "left": [
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 12 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 13 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 14 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 9 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 10 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 11 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 6 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 7 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 8 } }
-        ],
-        [
-          null,
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 4 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 5 } }
-        ]
-      ],
-      "right": [
-        [
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 12 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 13 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 14 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 9 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 10 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 11 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 6 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 7 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 8 } }
-        ],
-        [
-          null,
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 4 } },
-          { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 5 } }
-        ]
-      ],
-      "face": [
-        [
-          null,
-          null,
-          null
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 20 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 21 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 22 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 17 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 18 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 19 } }
-        ],
-        [
-          null,
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 15 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 16 } }
-        ]
-      ],
-      "exit": [
-        [
-          null, null, null
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 31 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 32 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 33 } }
-        ],
-        [
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 28 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 29 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 30 } }
-        ],
-        [
-          null,
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 26 } },
-          { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 27 } }
-        ]
-      ],
-      "stairs": { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 34 } },
-      "door": [
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 35 } },
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 36 } },
-        { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 37 } }
-      ]
-    },
-    "corners": {
-      "close": {
-        "left": { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 23 } },
-        "right": { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 23 } }
-      },
-      "mid": { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 24 } },
-      "far": {
-        "left": { "type": "ref", "path": "maze-sprites.json", "params": { "{frame}": 25 } },
-        "right": { "type": "ref", "path": "maze-sprites-flip.json", "params": { "{frame}": 25 } }
-      }
-    }
-  },
+  "sprites": { "type": "ref", "path": "maze-sprites-template.json" },
 
   "onEnd": [
     ["fade", 0.5],
@@ -132,5 +18,31 @@
   "music": {
     "type": "music",
     "path": "../music/cave.mp3"
+  },
+
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+
+  "portal": {
+    "4_11": {
+      "scene": "outside",
+      "position": { "x": 8, "y": 6 }
+    },
+    "3_0": {
+      "scene": "nora-house"
+    }
+  },
+
+  "treasures": {
+    "1_3": "watermelon"
   }
 }

@@ -8,5 +8,6 @@ export interface Label {
   height?: number;
   blinkRate?: Condition | [number, number];
   hidden?: Condition | boolean;
-  box: boolean;
+  box?: boolean;
+  outline?: boolean;
 }
