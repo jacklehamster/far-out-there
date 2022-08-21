@@ -1,7 +1,7 @@
 import Action from "../renderer/types/action";
 import Music from "../renderer/types/music";
 import { ReturnData } from "../renderer/types/return-data";
-import { Position } from "../scenes/slide-scene";
+import { Position } from "../scenes/canvas-scene";
 
 export default class Scene {
   type?: string;

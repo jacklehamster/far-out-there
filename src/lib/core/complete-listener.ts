@@ -1,5 +1,5 @@
 import { ReturnData } from "../renderer/types/return-data";
-import { Position } from "../scenes/slide-scene";
+import { Position } from "../scenes/canvas-scene";
 
 export default interface CompleteListener {
   onComplete?: (returnData?: ReturnData) => void;
