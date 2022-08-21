@@ -11,4 +11,8 @@ export default interface Action {
   itemRemove?: string[];
   chance?: number;
   sound?: Music;
+  subMenu?: string;
+
+  item?: string;
+  cost?: number;
 }

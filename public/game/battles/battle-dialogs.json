@@ -39,13 +39,25 @@
         "noScroll": true
       },
       { "text": "attk", "x": 7, "y": 53,
-        "outline": true
+        "outline": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu"
+        }
       },
       { "text": "item", "x": 26, "y": 53,
-        "outline": true
+        "outline": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu"
+        }
       },
       { "text": "escp", "x": 45, "y": 53,
-        "outline": true
+        "outline": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu"
+        }
       },
       { "text": ">", "x": 1, "y": 52,
         "hidden": {
@@ -64,7 +76,7 @@
       { "text": ">", "x": 39, "y": 52,
         "hidden": {
           "type": "condition",
-          "formula": "scene.menuIndex != 2"
+          "formula": "scene.subMenu != undefined or scene.menuIndex != 2"
         },
         "outline": true
       },
@@ -72,6 +84,25 @@
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true, "fixed": true
+      },
+
+      { "text": "cola", "x": 7, "y": 53,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu == undefined or not scene.hasCola"
+        }
+      },
+      { "text": "burger", "x": 26, "y": 53,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu == undefined or not scene.hasBurger"
+        }
+      },
+      { "text": "x", "x": 55, "y": 53,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.subMenu == undefined or scene.menuIndex != 2"
+        }
       }
     ]
   }

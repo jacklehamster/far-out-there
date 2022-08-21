@@ -109,10 +109,16 @@
       "block": true
     },
     "$/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 16 } }],
-      "portal": "shop"
+      "portal": "food-shop"
     },
     "\\$": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 17 } }],
-      "portal": "shop"
+      "portal": "food-shop"
+    },
+    "A/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 16 } }],
+      "portal": "armory"
+    },
+    "\\A": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 17 } }],
+      "portal": "armory"
     },
     "/$": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 0 } },

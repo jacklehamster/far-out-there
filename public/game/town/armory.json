@@ -1,0 +1,31 @@
+{
+  "type": "menuScene",
+  "title": "armory",
+  "onStart": [{
+      "message": "Welcome to the armory!"
+  }],
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "armory-dialog.json" },
+  "actions": [
+    { "action": "buy", "item": "shield", "cost": 500 },
+    { "action": "buy", "item": "armor", "cost": 1000 },
+    { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
+  }
+}

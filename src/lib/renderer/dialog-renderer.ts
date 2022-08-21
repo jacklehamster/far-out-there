@@ -86,6 +86,9 @@ export class DialogRenderer {
             if (dialog.hidden && !label.fixed) {
               return;
             }
+            if (dialog.lastDialog && !menu.message) {
+              return;
+            }
             if (this.context) {
               this.context.save();
             }
@@ -127,14 +130,16 @@ export class DialogRenderer {
       if ((label.box || Condition.eval(label.outline, { scene: menu })) && text) {
         let minX = Number.MAX_SAFE_INTEGER, minY = Number.MAX_SAFE_INTEGER, maxX = 0, maxY = 0;
         const realText = this.getRealText(menu, text);
-        realText.split("").forEach(letter => {
-          const [, , lw, lh] = fontSheet.getCropForLetter(letter);
-          minX = Math.min(minX, x + shift);
-          maxX = Math.max(maxX, x + shift + lw);
-          minY = Math.min(minY, y);
-          maxY = Math.max(maxY, y + lh);
-          shift += lw + 1;
-        });
+        if (realText.length) {
+          realText.split("").forEach(letter => {
+            const [, , lw, lh] = fontSheet.getCropForLetter(letter);
+            minX = Math.min(minX, x + shift);
+            maxX = Math.max(maxX, x + shift + lw);
+            minY = Math.min(minY, y);
+            maxY = Math.max(maxY, y + lh);
+            shift += lw + 1;
+          });
+        }
         this.context.fillStyle = "#00000077";
         const rectX = minX - 1;
         const rectY = minY;
@@ -165,6 +170,13 @@ export class DialogRenderer {
   }
 
   getRealText(scene: CanvasScene, text: string): string {
+    const inventoryExtract = text.match(/{item.(\d+)}/);
+    if (inventoryExtract) {
+      const items = Object.keys(scene.persist?.game.inventory ?? {});
+      items.sort();
+      return items[parseInt(inventoryExtract[1])] ?? "";
+    }
+
     const extract = text.match(/{([^}]*)}/);
     const realText = extract?.[1] ? text.replace(`{${extract?.[1]}}`, evaluate(extract?.[1], {
       ...scene,
@@ -204,14 +216,16 @@ export class DialogRenderer {
         shift = 0;
         const canScroll = !label.noScroll ? 1 : 0;
         const realText = this.getRealText(menu, text);
-        realText.split("").forEach(letter => {
-          if (this.context && fontSheet.asset?.image) {
-            const [lx, ly, lw, lh] = fontSheet.getCropForLetter(letter);
-            this.context.drawImage(fontSheet.asset?.image, lx, ly, lw, lh,
-              x + shift - canScroll * this.getActualScroll(menu, timestamp), y, lw, lh);
-            shift += lw + 1;
-          }
-        });
+        if (realText.length) {
+          realText.split("").forEach(letter => {
+            if (this.context && fontSheet.asset?.image) {
+              const [lx, ly, lw, lh] = fontSheet.getCropForLetter(letter);
+              this.context.drawImage(fontSheet.asset?.image, lx, ly, lw, lh,
+                x + shift - canScroll * this.getActualScroll(menu, timestamp), y, lw, lh);
+              shift += lw + 1;
+            }
+          });
+        }
       }
     }
   }

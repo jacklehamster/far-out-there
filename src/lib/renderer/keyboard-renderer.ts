@@ -13,6 +13,11 @@ export default class KeyboardRenderer<T extends CanvasScene> extends CanvasRende
     return undefined;
   }
 
+  restart(data: T, timestamp: DOMHighResTimeStamp): void {
+    super.restart(data, timestamp);
+    this.registerListener(data);
+  }
+
   render(data: T): void {
     super.render(data);
     this.registerListener(data);

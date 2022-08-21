@@ -33,6 +33,11 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     this.audioSFX = document.getElementById("audioSFX") as HTMLAudioElement;
   }
 
+  restart(data: T, timestamp: DOMHighResTimeStamp): void {
+    this.reset(data);
+    data.startTime = timestamp;
+  }
+
   getConnectionTag(data: T): string | undefined {
     return;
   }
@@ -76,8 +81,14 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     delete data.destination;
     delete data.mute;
 
+    if (data.dialog) {
+      delete data.dialog.hidden;
+      delete data.dialog.lastDialog;
+    }
+
     const persist = JSON.parse(localStorage.getItem(`persist_game`) ?? "{}");
     data.persist = persist;
+    this.updateColaBurger(data);
   }
 
   saveProp(data: T, prop: string, value: any) {
@@ -193,6 +204,12 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     inventory[item] = (inventory[item] ?? 0) + 1;
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
+    this.updateColaBurger(data);
+  }
+
+  updateColaBurger(data: T) {
+    data.hasCola = (data.persist?.game.inventory?.cola ?? 0) > 0;
+    data.hasBurger = (data.persist?.game.inventory?.burger ?? 0) > 0;
   }
 
   removeItem(data: T, item: string) {
@@ -207,6 +224,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
+    this.updateColaBurger(data);
   }
 
   saveTime(data: T) {
@@ -264,7 +282,12 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       }
 
       if (status === RenderingStatus.COMPLETED) {
-        this.performCompletionSteps(data, timestamp);
+        if (data.restartOnDone) {
+          data.restartOnDone = false;
+          this.restart(data, timestamp);
+        } else {
+          this.performCompletionSteps(data, timestamp);
+        }
       }
     };
     this.requestID = requestAnimationFrame(loop);
@@ -405,6 +428,12 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           this.playSFX(data.sounds?.heal);
           data.step++;
           break;
+        case "hideDialogs":
+          if (data.dialog) {
+            data.dialog.hidden = true;
+          }
+          data.step++;
+          break;
       }
     }
   }
@@ -460,6 +489,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     if (action.sound) {
       this.playSFX(action.sound);
     }
+    if (action.subMenu) {
+      data.subMenu = true;
+    }
 
     switch (action?.action) {
       case "clearCache":
@@ -480,7 +512,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       case "showInventory": {
         const items = Object.keys(data.persist?.game?.inventory ?? {}).filter(item => {
           return data.persist?.game?.inventory?.[item];
-        });
+        }).map(item => (data.persist?.game?.inventory?.[item] ?? 1) > 1 ? `${item}:${data.persist?.game?.inventory?.[item]}` : item);
         const stats = data.persist?.game.stats;
         if (stats && stats.gold) {
           items.push(`${stats.gold} gold.`);
@@ -490,6 +522,34 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       }
       case "saveStats":
         this.updateStatsWithLevelProgression(data);
+        break;
+      case "addGold":
+        this.addGold(data, 100);
+        this.playSFX(data.sounds?.pickup);
+        data.restartOnDone = true;
+        break;
+      case "buy":
+        if (action.cost) {
+          if (data.persist?.game.stats?.gold && data.persist.game.stats.gold >= action.cost) {
+            this.addGold(data, -action.cost);
+            this.playSFX(data.sounds?.pickup);
+            this.pickItem(data, action.item, `Here's your ${action.item}. Anything else?`);
+            data.justPickedUp = false;
+          } else {
+            data.message = `You don't have ${action.cost} gold!`;
+          }
+          data.restartOnDone = true;
+        }
+        return false;
+      case "hideDialogs":
+        if (data.dialog) {
+          data.dialog.hidden = true;
+        }
+        break;
+      case "lastDialog":
+        if (data.dialog) {
+          data.dialog.lastDialog = true;
+        }
         break;
     }
     return true;
@@ -506,18 +566,18 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     return Math.floor(this.getWeaponAttack(data) * (data.persist?.game.stats?.attack ?? 1));
   }
 
-  pickItem(data: T, item?: string) {
+  pickItem(data: T, item?: string, messageOverride?: string) {
     if (!item) {
-      data.message = `The chest is empty.`;
+      data.message = messageOverride ?? `The chest is empty.`;
     } else {
       const [, gold] = item.match(/(\d+)\sgold/) ?? [];
       if (gold) {
-        data.message = `You found ${item}`;
+        data.message = messageOverride ?? `You found ${item}`;
         this.addGold(data, parseInt(gold));
         data.justPickedUp = true;
       } else {
         this.addItem(data, item);
-        data.message = `You found a ${item}`;
+        data.message = messageOverride ?? `You found a ${item}`;
         data.justPickedUp = true;
       }
     }

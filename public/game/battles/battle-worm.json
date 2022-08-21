@@ -6,7 +6,7 @@
   "gold": 50,
 
   "foeMaxLife": 120,
-  "foeStrength": 20,
+  "foeStrength": 25,
 
   "numOptions": 3,
   "dialog": { "type": "ref", "path": "battle-dialogs.json", "params": { "{name}": "{foe.name}" } },

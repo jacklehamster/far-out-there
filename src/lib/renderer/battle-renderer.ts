@@ -63,15 +63,16 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
           data.foeAttackTime = 0;
           data.waitTime = timestamp;
           data.attackSequence = false;
-          if (Math.random() < .4 && !data.failedEscape) {
+          if (Math.random() < this.getDodgeChance(data) && !data.failedEscape) {
             data.foeMissed = true;
-            console.log("FOE MISSED");
+            // console.log("FOE MISSED");
             this.playSFX(data.sounds?.miss);
           } else {
             data.hurtTime = timestamp;
             data.failedEscape = false;
-            console.log("FOE HIT");
-            const hp = Math.max(0, data?.persist?.game.stats?.hp ?? 0) - Math.floor(1 + (data.foeStrength ?? 10) * Math.random() * 2);
+            // console.log("FOE HIT");
+            const damage = 1 + ((data.foeStrength ?? 10) * Math.random() * 2 * this.getArmorReduction(data));
+            const hp = Math.max(0, data?.persist?.game.stats?.hp ?? 0) - Math.floor(damage);
             this.saveStats(data, hp, data?.persist?.game.stats?.max ?? 0);
             this.playSFX(data.sounds?.foeHit);
           }
@@ -166,6 +167,20 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
     return data.message || !data.battleOver || (data.chest && !data.collected) ? RenderingStatus.RENDERING : RenderingStatus.COMPLETED;
   }
 
+  getArmorReduction(data: BattleScene) {
+    if (data.persist?.game.inventory?.["armor"]) {
+      return .6;
+    }
+    return 1;
+  }
+
+  getDodgeChance(data: BattleScene) {
+    if (data.persist?.game.inventory?.["shield"]) {
+      return .4;
+    }
+    return .3;
+  }
+
   createKeyHandlerDown(data: BattleScene): (e: KeyboardEvent) => void {
     const numOptions = this.attackOptions.length;
     return (e) => {
@@ -184,30 +199,59 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
           break;
         case "Space":
           data.selectedIndex = data.menuIndex;
-          if (data.selectedIndex === 0) {
-            data.attackTime = this.time;
-            data.attackSequence = true;
-            data.foeHurtTime = 0;
-            data.missed = false;
-            data.hurtTime = 0;
-            data.foeMissed = false;
-            data.failedEscape = false;
-          } else if (data.selectedIndex === 1) {
+          if (data.subMenu) {
+            if (data.selectedIndex === 0) {
+              if (data.hasCola) {
+                this.removeItem(data, 'cola');
+                this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) + 20, data.persist?.game.stats?.max ?? 100);
+                this.playSFX(data.sounds?.pickup);
 
-          } else if (data.selectedIndex === 2) {
-            if (Math.random() < .3) {
-              data.message = "Your escape attempt has FAILED.";
-              if (data.dialog) {
-                data.dialog.hidden = true;
-                data.attackSequence = true;
-                data.missed = true;
-                data.failedEscape = true;
+                if (data.dialog) {
+                  data.dialog.hidden = true;
+                  data.attackSequence = true;
+                  data.missed = true;
+                }
               }
-            } else {
-              data.message = "You have escaped.";
-              data.battleOver = true;
-              if (data.dialog) {
-                data.dialog.hidden = true;
+            } else if (data.selectedIndex === 1) {
+              if (data.hasBurger) {
+                this.removeItem(data, 'burger');
+                this.saveStats(data, data.persist?.game.stats?.max ?? 100, data.persist?.game.stats?.max ?? 100);
+                this.playSFX(data.sounds?.pickup);
+
+                if (data.dialog) {
+                  data.dialog.hidden = true;
+                  data.attackSequence = true;
+                  data.missed = true;
+                }
+              }
+            }
+            delete data.subMenu;
+          } else {
+            if (data.selectedIndex === 0) {
+              data.attackTime = this.time;
+              data.attackSequence = true;
+              data.foeHurtTime = 0;
+              data.missed = false;
+              data.hurtTime = 0;
+              data.foeMissed = false;
+              data.failedEscape = false;
+            } else if (data.selectedIndex === 1) {
+              data.subMenu = true;
+            } else if (data.selectedIndex === 2) {
+              if (Math.random() < .3) {
+                data.message = "Your escape attempt has FAILED.";
+                if (data.dialog) {
+                  data.dialog.hidden = true;
+                  data.attackSequence = true;
+                  data.missed = true;
+                  data.failedEscape = true;
+                }
+              } else {
+                data.message = "You have escaped.";
+                data.battleOver = true;
+                if (data.dialog) {
+                  data.dialog.hidden = true;
+                }
               }
             }
           }

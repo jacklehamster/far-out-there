@@ -1,0 +1,77 @@
+{
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "cola (40G)", "x": 7, "y": 0,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        },
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.message != undefined"
+        }
+      },
+      { "text": "burger (100G)", "x": 7, "y": 8,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        },
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.message != undefined"
+        }
+      },
+      { "text": "exit", "x": 7, "y": 16,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        },
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.message != undefined"
+        }
+      },
+      { "text": ">", "x": 1, "y": 0,
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 0 or scene.message != undefined"
+        },
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        }
+      },
+      { "text": ">", "x": 1, "y": 8,
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 1 or scene.message != undefined"
+        },
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        }
+      },
+      { "text": ">", "x": 1, "y": 16,
+        "noScroll": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 2 or scene.message != undefined"
+        },
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined"
+        }
+      },
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  }

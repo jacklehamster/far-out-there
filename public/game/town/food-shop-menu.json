@@ -1,0 +1,31 @@
+{
+  "type": "menuScene",
+  "title": "food-shop",
+  "onStart": [{
+      "message": "Would you like to try our new wurmy burger?"
+  }],
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "food-shop-dialog.json" },
+  "actions": [
+    { "action": "buy", "item": "cola", "cost": 40 },
+    { "action": "buy", "item": "burger", "cost": 100 },
+    { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
+  }
+}

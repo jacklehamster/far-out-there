@@ -10,14 +10,15 @@ export const LEVEL_PROGRESSION = [
   { xp: 0, hp: 100, attack: 1 },
   { xp: 400, hp: 120, attack: 1.1 },
   { xp: 800, hp: 150, attack: 1.2 },
-  { xp: 1200, hp: 180, attack: 1.3 },
-  { xp: 3000, hp: 200, attack: 1.4 },
-  { xp: 5000, hp: 250, attack: 1.5 },
+  { xp: 1200, hp: 180, attack: 1.5 },
+  { xp: 3000, hp: 250, attack: 2.0 },
+  { xp: 5000, hp: 500, attack: 3.0 },
 ];
 export interface Dialog {
   labels?: Label[];
   fontSheet?: FontSheet;
   hidden?: boolean;
+  lastDialog?: boolean;
 }
 
 export interface PersistData {
@@ -75,4 +76,10 @@ export default class CanvasScene extends Scene {
   itemBonus?: string[];
   itemRemove?: string[];
   slides?: Slide[];
+
+  subMenu?: boolean;
+  restartOnDone?: boolean;
+
+  hasCola?: boolean;
+  hasBurger?: boolean;
 }

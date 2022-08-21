@@ -98,27 +98,27 @@ export default class Assembler {
     return obj;
   }
 
-  async assemble(obj: any, dir?: string) {
+  async assemble(obj: any, dir?: string, property: string = "") {
     if (typeof (obj) !== 'object' || !obj) {
       return obj;
     }
     if (Array.isArray(obj)) {
       for (let i = 0; i < obj.length; i++) {
-        obj[i] = await this.assemble(obj[i], dir);
+        obj[i] = await this.assemble(obj[i], dir, `${property}[${i}]`);
       }
     } else {
       for (const i in obj) {
         if (obj.hasOwnProperty(i)) {
-          obj[i] = await this.assemble(obj[i], dir);
+          obj[i] = await this.assemble(obj[i], dir, `${property}.${i}`);
         }
       }
     }
 
     if ((obj.type === "reference" || obj.type === "ref") && obj.path) {
-      return await this.load(`${dir ?? ''}${obj.path}`, obj);
+      return await this.load(`${dir ?? ''}${obj.path}`, obj, property);
     }
     if (obj.type === "text" && obj.path) {
-      return await this.loadText(`${dir ?? ''}${obj.path}`, obj);
+      return await this.loadText(`${dir ?? ''}${obj.path}`, obj, property);
     }
     if (obj.type === "image" && obj.path) {
       const { blob, base64, image } = await this.fetchWithCache(`${dir}${obj.path}`);
@@ -156,15 +156,17 @@ export default class Assembler {
     return obj;
   }
 
-  async load(path: string, obj: any): Promise<any> {
+  async load(path: string, obj: any, property?: string): Promise<any> {
+    // console.log(">>", path, property);
     const dir = path.substring(0, path.lastIndexOf("/") + 1);
     const result = await this.internalFetch(path, response => response.text());
     const json = JSON.parse(result);
     const replacedJson = this.paramsReplacement(json, obj.params);
-    return await this.assemble(replacedJson, dir);
+    return await this.assemble(replacedJson, dir, property);
   }
 
-  async loadText(path: string, { splitLines, splitCells }: { splitLines?: boolean; splitCells?: boolean }): Promise<any> {
+  async loadText(path: string, { splitLines, splitCells }: { splitLines?: boolean; splitCells?: boolean }, property?: string): Promise<any> {
+    // console.log(">>", path, property);
     const text = await this.internalFetch(path, response => response.text());
     return splitLines || splitCells ? text.split("\n").map(line => splitCells ? line.match(/.{1,2}/g) : line) : text;
   }

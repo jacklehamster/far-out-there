@@ -1,0 +1,21 @@
+{
+  "type": "menuScene",
+  "title": "shop-menu",
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "shop-dialog.json" },
+  "actions": [
+    { "subMenu": "buy"},
+    { "subMenu": "sell" },
+    null
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}
