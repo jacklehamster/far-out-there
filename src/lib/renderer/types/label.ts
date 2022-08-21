@@ -10,4 +10,6 @@ export interface Label {
   hidden?: Condition | boolean;
   box?: boolean;
   outline?: boolean;
+  fixed?: boolean;
+  noScroll?: boolean;
 }

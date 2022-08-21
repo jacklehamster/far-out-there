@@ -1,9 +1,10 @@
 import { App, Workspace } from "../core/app";
 import SceneChangeListener from "../core/scene-change-listener";
 import { Renderer } from "./renderer";
+import { resolve } from "url";
 
 declare global {
-  interface Window { workspace: Workspace; }
+  interface Window { workspace: Workspace; resolve: typeof resolve }
 }
 
 export default class Registry implements Renderer<Workspace>, SceneChangeListener {
@@ -26,6 +27,7 @@ export default class Registry implements Renderer<Workspace>, SceneChangeListene
 
   render(workspace: Workspace) {
     window.workspace = workspace;
+    window.resolve = resolve;
     this.deepRender(workspace, workspace.appIndex);
   }
 

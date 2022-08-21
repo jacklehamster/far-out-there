@@ -59,5 +59,20 @@
 
   "treasures": {
     "6_9": "lamp"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    },
+    "jingle": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    },
+    "door": {
+      "type": "music",
+      "path": "../sounds/door.mp3"
+    }
   }
 }

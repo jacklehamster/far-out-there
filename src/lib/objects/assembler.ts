@@ -3,12 +3,14 @@ import Hero from "../renderer/types/hero";
 import Animation from "../renderer/types/animation";
 import BlobType from "../renderer/types/blob";
 import FontSheet from "../renderer/types/font-sheet";
-import { Slide } from "../scenes/slide-scene";
-import stringify from "json-stringify-pretty-compact";
+import { resolve } from "url";
+import { Slide } from "../scenes/canvas-scene";
 
 export default class Assembler {
   assetsManager: Record<string, string>;
-  cache: Record<string, { blob: Blob; base64: string | ArrayBuffer | null }> = {};
+  cache: Record<string, { blob: Blob; base64: string | ArrayBuffer | null; image: HTMLImageElement }> = {};
+  pendingLoad: Record<string, ((response: any) => void)[]> = {};
+  responses: Record<string, any> = {}
 
   constructor(assetsManager: Record<string, string>) {
     this.assetsManager = assetsManager;
@@ -32,12 +34,42 @@ export default class Assembler {
     });
   }
 
-  async fetchWithCache(path: string): Promise<{ blob: Blob; base64: string | ArrayBuffer | null }> {
+  async internalFetch<T>(longpath: string, transform: (response: Response) => Promise<T>): Promise<T> {
+    const path = resolve(location.href, longpath);
+    return new Promise((resolve) => {
+      if (this.responses[path]) {
+        resolve(this.responses[path]);
+        return;
+      }
+      if (!this.pendingLoad[path]) {
+        this.pendingLoad[path] = [];
+        fetch(path).then(response => transform(response)).then((result) => {
+          this.responses[path] = result;
+          this.pendingLoad[path].forEach(callback => callback(result));
+          delete this.pendingLoad[path];
+        });
+      }
+      this.pendingLoad[path].push(result => {
+        resolve(result);
+      });
+    });
+  }
+
+  async fetchWithCache(path: string): Promise<{ blob: Blob; base64: string | ArrayBuffer | null, image: HTMLImageElement }> {
     if (!this.cache[path]) {
-      const response = await fetch(path);
-      const blob = await response.blob();
-      const base64 = await this.blobToBase64(blob);
-      this.cache[path] = { blob, base64: base64 ?? "" };
+      const result = await this.internalFetch(path,
+        response => {
+          return response.blob()
+            .then(blob => this.blobToBase64(blob)
+              .then(base64 => ({
+                blob, base64: base64 ?? ""
+              }))
+              .then(({ blob, base64 }) => this.loadImage(blob).then(image => ({
+                blob, base64, image,
+              })))
+            )
+        });
+      this.cache[path] = result;
     }
     return this.cache[path];
   }
@@ -76,7 +108,9 @@ export default class Assembler {
       }
     } else {
       for (const i in obj) {
-        obj[i] = await this.assemble(obj[i], dir);
+        if (obj.hasOwnProperty(i)) {
+          obj[i] = await this.assemble(obj[i], dir);
+        }
       }
     }
 
@@ -87,11 +121,9 @@ export default class Assembler {
       return await this.loadText(`${dir ?? ''}${obj.path}`, obj);
     }
     if (obj.type === "image" && obj.path) {
-      const { blob, base64 } = await this.fetchWithCache(`${dir}${obj.path}`);
+      const { blob, base64, image } = await this.fetchWithCache(`${dir}${obj.path}`);
 
       this.assetsManager[obj.path] = base64 as string;
-
-      const image = await this.loadImage(blob);
 
       return new BlobType({
         path: obj.path,
@@ -133,9 +165,7 @@ export default class Assembler {
   }
 
   async loadText(path: string, { splitLines, splitCells }: { splitLines?: boolean; splitCells?: boolean }): Promise<any> {
-    const dir = path.substring(0, path.lastIndexOf("/") + 1);
-    const response = await fetch(path);
-    const text = await response.text();
+    const text = await this.internalFetch(path, response => response.text());
     return splitLines || splitCells ? text.split("\n").map(line => splitCells ? line.match(/.{1,2}/g) : line) : text;
   }
 }

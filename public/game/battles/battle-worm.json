@@ -1,0 +1,92 @@
+{
+  "title": "battle-worm",
+  "type": "battleScene",
+
+  "xp": 400,
+  "gold": 50,
+
+  "foeMaxLife": 120,
+  "foeStrength": 20,
+
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "battle-dialogs.json", "params": { "{name}": "{foe.name}" } },
+
+  "background": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../outside/landscape.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "range": [0, 0]
+  },
+  
+  "strike": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "sword-strike.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [0, 7],
+    "position": { "x": 0, "y": 5 }
+  },
+
+  "hurt": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../town/npc-sheet.png"
+    },
+    "position": "{position}",
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [15, 16]
+  },
+
+  "foe": {
+    "name": "Wurm",
+    "idle": { "type": "ref", "path": "animation.json", "params": { "{range}": [18,18] } },
+    "attack": { "type": "ref", "path": "animation.json", "params": { "{range}": [18,21] } },
+    "hurt": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "position": "{position}",
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 20,
+      "range": [17, 18]
+    }
+  },
+
+  "chestOpen": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 40] } },
+  "chestClose": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 38] } },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["checkGameOver", "game-over-death"],
+    ["return"]
+  ],
+  
+  "music": {
+    "type": "music",
+    "path": "../music/battle.mp3"
+  },
+
+  "sounds": { "type": "ref", "path": "battle-sounds.json" }
+}

@@ -32,6 +32,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
 
   createKeyHandlerDown(data: MazeScene): (e: KeyboardEvent) => void {
     return (e) => {
+      e.preventDefault();
       this.keys.add(e.code);
       if (!data.moveAction) {
         data.moveAction = { x: 0, y: 0 };
@@ -159,7 +160,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
     if (animation?.asset?.image && this.context) {
       const timeEllapsed = (timestamp ?? 0) - 0;
       const frame = animation?.frameRate ? Math.floor(animation.frameRate * timeEllapsed / 1000) : 0;
-      const [x, y, width, height] = animation?.getCrop(frame) ?? DEFAULT_CROP;
+      const [x, y, width, height, animating] = animation?.getCrop(frame) ?? DEFAULT_CROP;
       this.context.save();
       if (animation?.flip) {
         this.context.translate(this.context.canvas.width, 0);
@@ -173,7 +174,9 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
         0,
         width, height);
       this.context.restore();
+      return { animating };
     }
+    return {};
   }
 
   canMove(data: MazeScene) {
@@ -266,8 +269,9 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
       console.log("Chest", tag);
     }
 
+    const chance = { rand: Math.random() };
     data.events?.[tag]?.forEach(action => {
-      this.performAction(data, action);
+      this.performAction(data, action, chance);
     });
 
     this.autoSave(data);
@@ -384,6 +388,7 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
         delete data.openTime;
         data.opened = true;
         openIndex = 2;
+        this.playSFX(data.sounds?.door);
 
         if (this.isFrontChest(data)) {
           const { tag } = this.getFrontPosition(data);

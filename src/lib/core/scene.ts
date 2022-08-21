@@ -10,6 +10,7 @@ export default class Scene {
   persistState?: boolean;
   startTime?: number;
   music?: Music;
+  mute?: boolean;
   destination?: string;
   destinationPosition?: Position;
   destinationDirection?: number;
@@ -18,4 +19,14 @@ export default class Scene {
   returnPosition?: Position;
   returnDirection?: number;
   onStart?: Action[];
+
+  sounds?: {
+    heal: Music;
+    miss: Music;
+    foeHit: Music;
+    playerHit: Music;
+    door: Music;
+    pickup: Music;
+    jingle: Music;
+  }
 }

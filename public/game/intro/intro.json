@@ -52,8 +52,15 @@
     ]
   },
   "actions": [
-    { "action": "clearCache" },
-    null
+    { "action": "clearCache",
+      "sound": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    } },
+    { "sound": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    } }
   ],
   "onEnd": [
     ["wait", 2],

@@ -29,7 +29,7 @@
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
       {
-        "text": "This is the house of Blunk",
+        "text": "This is the house of Blunk. Take a nice rest.",
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true
@@ -37,11 +37,19 @@
     ]
   },
   "onEnd": [
+    ["healFully"],
     ["fade", 0.5],
     ["return"]
   ],
   "music": {
     "type": "music",
     "path": "../music/town.mp3"
+  },
+
+  "sounds": {
+    "heal": {
+      "type": "music",
+      "path": "../sounds/drink.mp3"
+    }
   }
 }

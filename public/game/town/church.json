@@ -1,0 +1,69 @@
+{
+  "type": "slideScene",
+  "title": "church",
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "indoors.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [3, 3]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [22, 22]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "text": "Welcome to the church! Your level is {persist.game.stats.level}. To reach the next level, you need {persist.game.stats.xpNext} experience points.",
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/church.mp3"
+  }
+}

@@ -43,6 +43,22 @@
   },
 
   "treasures": {
-    "1_3": "watermelon"
+    "1_3": "watermelon",
+    "8_8": "50 gold"    
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    },
+    "jingle": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    },
+    "door": {
+      "type": "music",
+      "path": "../sounds/door.mp3"
+    }
   }
 }

@@ -1,3 +1,4 @@
+import Music from "./music";
 import { ReturnData } from "./return-data";
 
 export default interface Action {
@@ -8,4 +9,6 @@ export default interface Action {
   message: string;
   itemBonus?: string[];
   itemRemove?: string[];
+  chance?: number;
+  sound?: Music;
 }

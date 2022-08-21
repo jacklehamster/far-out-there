@@ -1,5 +1,5 @@
+import { Position } from "../../scenes/canvas-scene";
 import MapScene, { Tile } from "../../scenes/map-scene";
-import { Position } from "../../scenes/slide-scene";
 import Animation from "./animation";
 
 export default class Hero {
@@ -17,8 +17,8 @@ export default class Hero {
   }
 
   moveTo(x: number, y: number, time: DOMHighResTimeStamp, immediate?: boolean) {
-    this.fromPosition.x = this.position?.x ?? 0;
-    this.fromPosition.y = this.position?.y ?? 0;
+    this.fromPosition.x = this.position?.x ?? x;
+    this.fromPosition.y = this.position?.y ?? y;
     if (!this.position) {
       this.position = { x: 0, y: 0 };
     }
@@ -49,6 +49,9 @@ export default class Hero {
   }
 
   canMoveBy(dx: number, dy: number, map: MapScene) {
+    if (map.destination) {
+      return false;
+    }
     return this.position && this.canMoveTo(this.position.x + dx, this.position.y + dy, map);
   }
 

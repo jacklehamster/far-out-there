@@ -15,6 +15,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
       delete data.heroes[0].position;
     }
     delete data.moveAction;
+    data.stepsTaken = 0;
   }
 
   createKeyHandlerUp(data: MapScene): ((e: KeyboardEvent) => void) {
@@ -26,6 +27,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
 
   createKeyHandlerDown(data: MapScene): (e: KeyboardEvent) => void {
     return (e) => {
+      e.preventDefault();
       this.keys.add(e.code);
       if (!data.moveAction) {
         data.moveAction = { x: 0, y: 0 };
@@ -42,7 +44,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
           data.moveAction.y = 1;
           break;
         case "Space":
-          this.performAction(data, data.spaceAction);
+          this.performAction(data, data.spaceAction, { rand: Math.random() });
           break;
         case "ArrowLeft":
         case "KeyA":
@@ -99,10 +101,22 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
         data.destination = underTile.portal;
         data.destinationPosition = underTile.portalPosition;
         data.destinationDirection = underTile.portalDirection;
-      } else if (data.moveAction.x || data.moveAction.y) {
-        if (mainHero.canMoveBy(data.moveAction.x, data.moveAction.y, data)) {
-          mainHero.moveBy(data.moveAction.x, data.moveAction.y, timestamp);
-          this.autoSave(data);
+      } else {
+        if (data.movePending) {
+          data.movePending = false;
+          data.stepsTaken = (data.stepsTaken ?? 0) + 1;
+          if (data.stepsTaken > 1 && this.onCellActions(data)) {
+            data.moveAction.x = 0;
+            data.moveAction.y = 0;
+          }
+        }
+
+        if (data.moveAction.x || data.moveAction.y) {
+          if (mainHero.canMoveBy(data.moveAction.x, data.moveAction.y, data)) {
+            mainHero.moveBy(data.moveAction.x, data.moveAction.y, timestamp);
+            data.movePending = true;
+            this.autoSave(data);
+          }
         }
       }
     }
@@ -152,6 +166,17 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
     });
 
     return data.destination ? RenderingStatus.COMPLETED : RenderingStatus.RENDERING;
+  }
+
+  onCellActions(data: MapScene) {
+    const chance = { rand: Math.random() };
+    let didAction = false;
+    for (let action of data.onCellActions ?? []) {
+      if (this.performAction(data, action, chance)) {
+        didAction = true;
+      }
+    }
+    return didAction;
   }
 
   getConnectionTag(data: MapScene): string | undefined {

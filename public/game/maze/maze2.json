@@ -40,6 +40,22 @@
   },
 
   "treasures": {
-    "1_6": "sword"
+    "1_6": "sword",
+    "8_8": "10 gold"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    },
+    "jingle": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    },
+    "door": {
+      "type": "music",
+      "path": "../sounds/door.mp3"
+    }
   }
 }

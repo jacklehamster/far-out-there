@@ -1,8 +1,7 @@
 import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
 import { ReturnData } from "../renderer/types/return-data";
-import CanvasScene from "./canvas-scene";
-import { Position } from "./slide-scene";
+import CanvasScene, { Position } from "./canvas-scene";
 
 type Anim = Animation | null;
 

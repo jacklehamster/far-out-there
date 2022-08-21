@@ -1,0 +1,24 @@
+{
+  "type": "menuScene",
+  "title": "outside-menu",
+  "background": {
+    "type": "image",
+    "path": "landscape.png"
+  },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "../town/menu-dialogs.json" },
+
+  "actions": [
+    { "action": "showStats"},
+    { "action": "showInventory" },
+    null
+  ],
+  "onEnd": [
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

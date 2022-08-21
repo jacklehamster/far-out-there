@@ -75,6 +75,12 @@
       ],
       "portal": "npc4"
     },
+    " #": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 10 } }
+      ],
+      "portal": "npc5"
+    },
     " o": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 11 } }
@@ -169,6 +175,24 @@
     " ô": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 23 } }
+      ],
+      "block": true
+    },
+    "┼/": { "images": [{ "type": "ref", "path": "church-tile.json", "params": { "{frame}": 2 } }],
+      "portal": "church"
+    },
+    "\\┼": { "images": [{ "type": "ref", "path": "church-tile.json", "params": { "{frame}": 3 } }],
+      "portal": "church"
+    },
+    "/┼": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "church-tile.json", "params": { "{frame}": 0 } }
+      ],
+      "block": true
+    },
+    "┼\\": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 7 } },
+        { "type": "ref", "path": "church-tile.json", "params": { "{frame}": 1 } }
       ],
       "block": true
     }

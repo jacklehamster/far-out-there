@@ -1,8 +1,7 @@
 import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
 import Hero from "../renderer/types/hero";
-import CanvasScene from "./canvas-scene";
-import { Position } from "./slide-scene";
+import CanvasScene, { Position } from "./canvas-scene";
 
 export interface Tile {
   images?: Animation[];
@@ -23,4 +22,7 @@ export default class MapScene extends CanvasScene {
   heroes: Hero[] = [];
   moveAction?: Position;
   spaceAction?: Action;
+  onCellActions?: Action[];
+  stepsTaken?: number;
+  movePending?: boolean;
 }

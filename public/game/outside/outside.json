@@ -37,5 +37,23 @@
   "music": {
     "type": "music",
     "path": "../music/outside.mp3"
-  }
+  },
+  "spaceAction": {
+    "action": "goto",
+    "destination": {
+      "scene": "outside-menu"
+    }
+  },
+  "onCellActions": [
+    {
+      "chance": 0.1,
+      "action": "goto",
+      "destination": { "scene": "battle-bat" }
+    },
+    {
+      "chance": 0.05,
+      "action": "goto",
+      "destination": { "scene": "battle-lion" }
+    }
+  ]
 }

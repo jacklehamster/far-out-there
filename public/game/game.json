@@ -17,13 +17,16 @@
     { "type": "reference", "path": "town/npc2.json" },
     { "type": "reference", "path": "town/npc3.json" },
     { "type": "reference", "path": "town/npc4.json" },
+    { "type": "reference", "path": "town/npc5.json" },
     { "type": "reference", "path": "town/house.json" },
     { "type": "reference", "path": "town/house2.json" },
     { "type": "reference", "path": "town/myhouse.json" },
     { "type": "reference", "path": "town/shop.json" },
+    { "type": "reference", "path": "town/church.json" },
     { "type": "reference", "path": "town/airport.json" },
     { "type": "reference", "path": "town/nora-indoor.json" },
     { "type": "reference", "path": "outside/outside.json" },
+    { "type": "reference", "path": "outside/outside-menu.json" },
     { "type": "reference", "path": "outside/nora-house.json" },
     { "type": "reference", "path": "maze/maze.json" },
     { "type": "reference", "path": "maze/maze2.json" },
@@ -32,7 +35,10 @@
     { "type": "reference", "path": "game-over/guard-to-tunnel.json" },
     { "type": "reference", "path": "game-over/space-out.json" },
     { "type": "reference", "path": "game-over/game-over.json" },
-    { "type": "reference", "path": "battles/battle-bat.json" }
+    { "type": "reference", "path": "battles/battle-bat.json" },
+    { "type": "reference", "path": "battles/battle-lion.json" },
+    { "type": "reference", "path": "battles/battle-worm.json" },
+    { "type": "reference", "path": "intro/game-over.json" }
   ],
   "connections": { "type": "ref", "path": "connections/connections.json" },
   "renderers": ["SceneRenderer", "CodeRenderer"]

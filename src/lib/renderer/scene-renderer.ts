@@ -5,7 +5,7 @@ import AnimationScene from "../scenes/animation-scene";
 import MapScene from "../scenes/map-scene";
 import MazeScene from "../scenes/maze-scene";
 import MenuScene from "../scenes/menu-scene";
-import SlideScene, { Position } from "../scenes/slide-scene";
+import SlideScene from "../scenes/slide-scene";
 import MazeRenderer from "./maze-renderer";
 import { Renderer } from "./renderer";
 import AnimationRenderer from "./types/animation-renderer";
@@ -18,6 +18,7 @@ import LoadRenderer from "./types/load-renderer";
 import LoadScene from "../scenes/load-scene";
 import BattleRenderer from "./battle-renderer";
 import BattleScene from "../scenes/battle-scene";
+import { Position } from "../scenes/canvas-scene";
 
 export default class SceneRenderer implements Renderer<App>, SceneChangeListener {
   canvas: HTMLElement | null;

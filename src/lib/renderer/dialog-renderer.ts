@@ -2,6 +2,7 @@ import Condition from "../core/condition";
 import CanvasScene from "../scenes/canvas-scene";
 import FontSheet from "./types/font-sheet";
 import { Label } from "./types/label";
+import { evaluate } from "mathjs";
 
 export class DialogRenderer {
   canvas: HTMLCanvasElement | null;
@@ -34,7 +35,7 @@ export class DialogRenderer {
     }
 
     let shift = 0;
-    (lastLabel.text ?? scene.message).split("").forEach(letter => {
+    this.getRealText(scene, lastLabel.text ?? scene.message).split("").forEach(letter => {
       if (scene.dialog?.fontSheet) {
         const [lx, ly, lw, lh] = scene.dialog.fontSheet.getCropForLetter(letter);
         shift += lw + 1;
@@ -76,34 +77,42 @@ export class DialogRenderer {
 
   render(menu: CanvasScene, timestamp: DOMHighResTimeStamp): void {
     this.time = timestamp;
-    const { dialog } = menu;
-    if (dialog) {
-      const { labels, fontSheet } = dialog;
-      if (fontSheet) {
-        labels?.forEach(label => {
-          if (this.context) {
-            this.context.save();
-          }
-          this.renderOutline(label, fontSheet, menu, timestamp, menu.message);
-          if (this.context) {
-            this.context.restore();
-          }
-        });
-        labels?.forEach(label => {
-          if (this.context) {
-            this.context.save();
-          }
-          this.renderLabel(label, fontSheet, menu, timestamp, menu.message);
-          if (this.context) {
-            this.context.restore();
-          }
-        });
+    const { dialog, dialogs } = menu;
+    [...dialogs ?? [], dialog].forEach(dialog => {
+      if (dialog) {
+        const { labels, fontSheet } = dialog;
+        if (fontSheet) {
+          labels?.forEach(label => {
+            if (dialog.hidden && !label.fixed) {
+              return;
+            }
+            if (this.context) {
+              this.context.save();
+            }
+            this.renderOutline(label, fontSheet, menu, timestamp, menu.message);
+            if (this.context) {
+              this.context.restore();
+            }
+          });
+          labels?.forEach(label => {
+            if (dialog.hidden && !label.fixed) {
+              return;
+            }
+            if (this.context) {
+              this.context.save();
+            }
+            this.renderLabel(label, fontSheet, menu, timestamp, menu.message);
+            if (this.context) {
+              this.context.restore();
+            }
+          });
+        }
+        if (menu.message && this.isCompleted(menu)) {
+          menu.message = undefined;
+          menu.scroll = 0;
+        }
       }
-      if (menu.message && this.isCompleted(menu)) {
-        menu.message = undefined;
-        menu.scroll = 0;
-      }
-    }
+    });
   }
 
   stopRendering() {
@@ -115,9 +124,10 @@ export class DialogRenderer {
     const text = label.text ?? message;
     let shift = 0;
     if (this.context) {
-      if ((label.box || label.outline) && text) {
+      if ((label.box || Condition.eval(label.outline, { scene: menu })) && text) {
         let minX = Number.MAX_SAFE_INTEGER, minY = Number.MAX_SAFE_INTEGER, maxX = 0, maxY = 0;
-        text.split("").forEach(letter => {
+        const realText = this.getRealText(menu, text);
+        realText.split("").forEach(letter => {
           const [, , lw, lh] = fontSheet.getCropForLetter(letter);
           minX = Math.min(minX, x + shift);
           maxX = Math.max(maxX, x + shift + lw);
@@ -154,6 +164,14 @@ export class DialogRenderer {
     }
   }
 
+  getRealText(scene: CanvasScene, text: string): string {
+    const extract = text.match(/{([^}]*)}/);
+    const realText = extract?.[1] ? text.replace(`{${extract?.[1]}}`, evaluate(extract?.[1], {
+      ...scene,
+    })) : text;
+    return extract ? this.getRealText(scene, realText) : realText;
+  }
+
   renderLabel(label: Label, fontSheet: FontSheet, menu: CanvasScene, timestamp: DOMHighResTimeStamp, message?: string) {
     const { x, y, hidden } = label;
     const text = label.text ?? message;
@@ -184,11 +202,13 @@ export class DialogRenderer {
       }
       if (text) {
         shift = 0;
-        text.split("").forEach(letter => {
+        const canScroll = !label.noScroll ? 1 : 0;
+        const realText = this.getRealText(menu, text);
+        realText.split("").forEach(letter => {
           if (this.context && fontSheet.asset?.image) {
             const [lx, ly, lw, lh] = fontSheet.getCropForLetter(letter);
             this.context.drawImage(fontSheet.asset?.image, lx, ly, lw, lh,
-              x + shift - this.getActualScroll(menu, timestamp), y, lw, lh);
+              x + shift - canScroll * this.getActualScroll(menu, timestamp), y, lw, lh);
             shift += lw + 1;
           }
         });

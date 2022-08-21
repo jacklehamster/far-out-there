@@ -1,4 +1,4 @@
-import { Position } from "../../scenes/slide-scene";
+import { Position } from "../../scenes/canvas-scene";
 
 export interface ReturnData {
   scene?: string;

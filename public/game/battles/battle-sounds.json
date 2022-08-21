@@ -1,0 +1,26 @@
+{
+    "miss": {
+      "type": "music",
+      "path": "../sounds/dud.mp3"
+    },
+    "foeHit": {
+      "type": "music",
+      "path": "../sounds/hit-land.mp3"
+    },
+    "playerHit": {
+      "type": "music",
+      "path": "../sounds/player-hurt.mp3"
+    },
+    "door": {
+      "type": "music",
+      "path": "../sounds/door.mp3"
+    },
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    },
+    "jingle": {
+      "type": "music",
+      "path": "../sounds/jingle.mp3"
+    }
+  }

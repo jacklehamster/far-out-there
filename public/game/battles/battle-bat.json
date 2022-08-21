@@ -1,48 +1,27 @@
 {
-  "title": "battle",
+  "title": "battle-bat",
   "type": "battleScene",
 
+  "xp": 100,
+  "gold": 10,
+
+  "foeMaxLife": 40,
+  "foeStrength": 8,
+
   "numOptions": 3,
-  "dialog": {
-    "type": "dialog",
-    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
-    "labels": [
-      { "text": "attack", "x": 7, "y": 1,
-        "outline": true
-      },
-      { "text": "block", "x": 7, "y": 8,
-        "outline": true
-      },
-      { "text": "escape", "x": 7, "y": 15,
-        "outline": true
-      },
-      { "text": ">", "x": 1, "y": 1,
-        "hidden": {
-          "type": "condition",
-          "formula": "scene.menuIndex != 0"
-        },
-        "outline": true
-      },
-      { "text": ">", "x": 1, "y": 8,
-        "hidden": {
-          "type": "condition",
-          "formula": "scene.menuIndex != 1"
-        },
-        "outline": true
-      },
-      { "text": ">", "x": 1, "y": 15,
-        "hidden": {
-          "type": "condition",
-          "formula": "scene.menuIndex != 2"
-        },
-        "outline": true
-      },
-      {
-        "x": 1, "y": 49,
-        "width": 62, "height": 20,
-        "box": true
-      }
-    ]
+  "dialog": { "type": "ref", "path": "battle-dialogs.json", "params": { "{name}": "{foe.name}" } },
+
+  "background": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../outside/landscape.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "range": [0, 0]
   },
   
   "strike": {
@@ -56,21 +35,58 @@
       "height": 64
     },
     "frameRate": 20,
-    "range": [0, 7]
+    "range": [0, 7],
+    "position": { "x": 0, "y": 5 }
+  },
+
+  "hurt": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../town/npc-sheet.png"
+    },
+    "position": "{position}",
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [15, 16]
   },
 
   "foe": {
+    "name": "Werebat",
     "idle": { "type": "ref", "path": "animation.json", "params": { "{range}": [3,3] } },
-    "attack": { "type": "ref", "path": "animation.json", "params": { "{range}": [3,5] } }
+    "attack": { "type": "ref", "path": "animation.json", "params": { "{range}": [3,5] } },
+    "hurt": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "position": "{position}",
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 20,
+      "range": [11, 12]
+    }
   },
+
+  "chestOpen": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 40] } },
+  "chestClose": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 38] } },
 
   "onEnd": [
     ["fade", 0.5],
+    ["checkGameOver", "game-over-death"],
     ["return"]
   ],
   
   "music": {
     "type": "music",
     "path": "../music/battle.mp3"
-  }
+  },
+
+  "sounds": { "type": "ref", "path": "battle-sounds.json" }
 }

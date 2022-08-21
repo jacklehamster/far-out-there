@@ -20,5 +20,11 @@
   "music": {
     "type": "music",
     "path": "../music/town.mp3"
+  },
+  "spaceAction": {
+    "action": "goto",
+    "destination": {
+      "scene": "town-menu"
+    }
   }
 }

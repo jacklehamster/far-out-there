@@ -19,6 +19,7 @@ export default class MenuRenderer extends KeyboardRenderer<MenuScene> {
   createKeyHandlerDown(data: MenuScene): (e: KeyboardEvent) => void {
     const numOptions = data.numOptions ?? 2;
     return (e) => {
+      e.preventDefault();
       switch (e.code) {
         case "KeyW":
         case "ArrowUp":
@@ -31,7 +32,7 @@ export default class MenuRenderer extends KeyboardRenderer<MenuScene> {
         case "Space":
           data.selectedIndex = data.menuIndex;
           this.unregisterListener();
-          this.performAction(data, data.actions?.[data.selectedIndex ?? -1]);
+          this.performAction(data, data.actions?.[data.selectedIndex ?? -1], { rand: Math.random() });
           break;
       }
     };

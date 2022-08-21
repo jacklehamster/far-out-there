@@ -4,6 +4,7 @@
     "type": "image",
     "path": "../town/npc-sheet.png"
   },
+  "position": "{position}",
   "sprite": {
     "width": 64,
     "height": 64

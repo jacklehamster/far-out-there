@@ -1,0 +1,13 @@
+{
+  "type": "animation",
+  "asset": {
+    "type": "image",
+    "path": "../maze/maze.png"
+  },
+  "sprite": {
+    "width": 64,
+    "height": 64
+  },
+  "frameRate": 15,
+  "range": "{range}"
+}

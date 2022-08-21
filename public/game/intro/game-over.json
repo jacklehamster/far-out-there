@@ -1,0 +1,23 @@
+{
+  "type": "menuScene",
+  "title": "game-over-death",
+  "background": {
+    "type": "image",
+    "path": "../black.png"
+  },
+  "onStart": [
+    { "action": "clearCache" }
+  ],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "game over", "x": 14, "y": 27  }
+    ]
+  },
+  "onEnd": [
+    ["fade", 3],
+    ["hideLoading"],
+    ["goto", "intro"]
+  ]
+}

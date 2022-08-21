@@ -1,0 +1,77 @@
+{
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "{name}", "x": 1, "y": 0,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.battleOver == false"
+        },
+        "fixed": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.battleOver"
+        },
+        "noScroll": true
+      },
+      { "text": "HP {foeLife}", "x": 39, "y": 0,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.battleOver == false"
+        },
+        "fixed": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.battleOver"
+        },
+        "noScroll": true
+      },
+      { "text": "HP {persist.game.stats.hp}", "x": 1, "y": 44,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.battleOver == false and not scene.failedEscape"
+        },
+        "fixed": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.battleOver or scene.failedEscape"
+        },
+        "noScroll": true
+      },
+      { "text": "attk", "x": 7, "y": 53,
+        "outline": true
+      },
+      { "text": "item", "x": 26, "y": 53,
+        "outline": true
+      },
+      { "text": "escp", "x": 45, "y": 53,
+        "outline": true
+      },
+      { "text": ">", "x": 1, "y": 52,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 0"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 20, "y": 52,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 1"
+        },
+        "outline": true
+      },
+      { "text": ">", "x": 39, "y": 52,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.menuIndex != 2"
+        },
+        "outline": true
+      },
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true, "fixed": true
+      }
+    ]
+  }
