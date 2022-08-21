@@ -158,8 +158,8 @@ export default class Assembler {
 
   async load(path: string, obj: any): Promise<any> {
     const dir = path.substring(0, path.lastIndexOf("/") + 1);
-    const response = await fetch(path);
-    const json = await response.json();
+    const result = await this.internalFetch(path, response => response.text());
+    const json = JSON.parse(result);
     const replacedJson = this.paramsReplacement(json, obj.params);
     return await this.assemble(replacedJson, dir);
   }
