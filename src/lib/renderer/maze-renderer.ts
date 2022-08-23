@@ -216,6 +216,10 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
     if (data.message) {
       return false;
     }
+    if (this.isFrontLocked(data)) {
+      return data?.persist?.game?.inventory?.key;
+    }
+
     return this.isFrontDoor(data) || this.isFrontChest(data);
   }
 
@@ -233,7 +237,15 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
       return false;
     }
     const { x, y } = this.getFrontPosition(data);
-    return data.grid?.[y]?.[x] === "DD";
+    return data.grid?.[y]?.[x] === "DD" || data.grid?.[y]?.[x] === "LK";
+  }
+
+  isFrontLocked(data: MazeScene) {
+    if (!data.position) {
+      return false;
+    }
+    const { x, y } = this.getFrontPosition(data);
+    return data.grid?.[y]?.[x] === "LK";
   }
 
   isFrontStairs(data: MazeScene) {
@@ -341,6 +353,8 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
       if (data.openAction) {
         if (this.canOpen(data)) {
           data.openTime = timestamp + 1;
+        } else if (this.isFrontLocked(data) && !data.opened) {
+          data.message = "The door is locked.";
         }
       }
     }
@@ -417,11 +431,11 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
   }
 
   isBlock(block?: string) {
-    return block === "[]" || block === "EX" || block === "DD";
+    return block === "[]" || block === "EX" || block === "DD" || block === "LK";
   }
 
   isExit(block: string) {
-    return block === "EX" || block === "DD";
+    return block === "EX" || block === "DD" || block === "LK";
   }
 
   isChest(block: string) {
@@ -478,6 +492,8 @@ export default class MazeRenderer extends KeyboardRenderer<MazeScene> {
               this.drawAnimation(data.sprites?.walls?.stairs, timestamp);
             } else if (midBlock === "DD") {
               this.drawAnimation(data.sprites?.walls?.door[openIndex], timestamp);
+            } else if (midBlock === "LK") {
+              this.drawAnimation(data.sprites?.walls?.lock[openIndex], timestamp);
             } else if (this.isChest(midBlock)) {
               this.drawAnimation(data.sprites?.walls?.chest[openIndex], timestamp);
             } else if (this.isGuard(midBlock)) {

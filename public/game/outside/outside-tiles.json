@@ -123,10 +123,22 @@
       ],
       "block": true
     },
+    "M/": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 12 } }],
+      "portal": "mountain-maze", "portalDirection": 2, "portalPosition": { "x": 8, "y": 1 }
+    },
+    "\\M": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 13 } }],
+      "portal": "mountain-maze", "portalDirection": 2, "portalPosition": { "x": 8, "y": 1 }
+    },
     "./": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 12 } }],
       "portal": "cave", "portalDirection": 2, "portalPosition": { "x": 3, "y": 1 }
     },
     "\\.": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 13 } }],
       "portal": "cave", "portalDirection": 2, "portalPosition": { "x": 3, "y": 1 }
+    },
+    "|/": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 2 } }],
+      "portal": "ara-indoor"
+    },
+    "\\|": { "images":[{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 3 } }],
+      "portal": "ara-indoor"
     }
   }

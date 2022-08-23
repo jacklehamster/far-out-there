@@ -38,15 +38,15 @@
       "position": { "x": 5, "y": 21 }
     },
     "8_0": {
-      "scene": "outside",
-      "position": { "x": 5, "y": 21 }
+      "scene": "valley"
     }
   },
 
   "treasures": {
     "1_23": "20 gold",
     "3_11": "100 gold",
-    "11_15": "30 gold",
+    "11_15": "200 gold",
+    "1_15": "80 gold",
     "7_23": "50 gold",
     "9_19": "key"
   },

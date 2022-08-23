@@ -69,6 +69,7 @@ export default class MazeScene extends CanvasScene {
         [Anim, Anim, Anim],
       ];
       door: [Anim, Anim, Anim];
+      lock: [Anim, Anim, Anim];
       stairs: Anim;
       chest: [Anim, Anim, Anim];
       guard: Anim;

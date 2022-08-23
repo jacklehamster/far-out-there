@@ -1,0 +1,43 @@
+{
+  "title": "valley",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "valley.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 5 } }],
+      "block": true
+  },
+  "tiles": { "type": "ref", "path": "outside-tiles.json" },
+  "heroes": { "type": "ref", "path": "../town/heroes.json" },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/outside.mp3"
+  },
+  "spaceAction": {
+    "action": "goto",
+    "destination": {
+      "scene": "outside-menu"
+    }
+  },
+  "onCellActions": [
+    {
+      "chance": 0.1,
+      "action": "goto",
+      "destination": { "scene": "battle-squido" }
+    },
+    {
+      "chance": 0.5,
+      "action": "goto",
+      "destination": { "scene": "battle-worm" }
+    }
+  ]
+}
