@@ -114,6 +114,12 @@
     "\\$": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 17 } }],
       "portal": "food-shop"
     },
+    "M]": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 2 } }],
+      "portal": "mechanic"
+    },
+    "[M": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 3 } }],
+      "portal": "mechanic"
+    },
     "A/": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 16 } }],
       "portal": "armory"
     },

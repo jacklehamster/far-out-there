@@ -30,9 +30,12 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
     data.message = undefined;
     data.chest = undefined;
     data.attackSequence = false;
-    if (!data?.persist?.game?.stats?.hp) {
-      this.saveStats(data, data?.persist?.game?.stats?.max ?? 100, data?.persist?.game?.stats?.max ?? 100);
-    }
+    data.hero = 0;
+    data.persist?.game.stats?.heroes.forEach((stat, hero) => {
+      if (stat.hp) {
+        this.saveStats(data, stat.max ?? 100, stat.max ?? 100, hero);
+      }
+    });
   }
 
   performRendering(data: BattleScene, timestamp: DOMHighResTimeStamp): RenderingStatus {
@@ -48,7 +51,8 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
             data.chest = {
               opened: 0,
             };
-            this.addXP(data, data.xp ?? 0);
+            data.persist?.game.stats?.heroes.filter(({ active }) => active)
+              .forEach((heroStat, hero) => this.addXP(data, data.xp ?? 0, hero));
             const extraMessage = this.updateStatsWithLevelProgression(data) ? " You advanced to a new level." : '';
             this.updateLevelProgression(data);
             data.message = `The ${data.foe?.name} has been defeated. You gained ${data.xp} XP.` + extraMessage;
@@ -71,9 +75,10 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
             data.hurtTime = timestamp;
             data.failedEscape = false;
             // console.log("FOE HIT");
-            const damage = 1 + ((data.foeStrength ?? 10) * Math.random() * 2 * this.getArmorReduction(data));
-            const hp = Math.max(0, data?.persist?.game.stats?.hp ?? 0) - Math.floor(damage);
-            this.saveStats(data, hp, data?.persist?.game.stats?.max ?? 0);
+            const damage = 1 + ((data.foeStrength ?? 10) * Math.random() * 2 * this.getDefense(data, data.hero ?? 0));
+            const heroStat = this.getHeroStat(data, data.hero ?? 0);
+            const hp = Math.max(0, heroStat.hp ?? 0) - Math.floor(damage);
+            this.saveStats(data, hp, heroStat.max ?? 0, data.hero ?? 0);
             this.playSFX(data.sounds?.foeHit);
           }
         }
@@ -98,7 +103,7 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
             this.playSFX(data.sounds?.miss);
           } else {
             console.log("HIT");
-            data.foeLife = Math.max(0, (data.foeLife ?? 0) - Math.floor(1 + this.getAttack(data) * Math.random() * 2));
+            data.foeLife = Math.max(0, (data.foeLife ?? 0) - Math.floor(1 + this.getAttack(data, data.hero ?? 0) * Math.random() * 2));
             data.foeHurtTime = timestamp;
             this.playSFX(data.sounds?.playerHit);
             if (!data.foeLife) {
@@ -157,7 +162,7 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
           || !!data.message;
       }
 
-      if (!data.persist?.game.stats?.hp && !data.hurtTime && !data.battleOver && data.dialog) {
+      if (data.persist?.game.stats?.heroes.every(({ hp }) => !hp) && !data.hurtTime && !data.battleOver && data.dialog) {
         data.battleOver = true;
         data.message = "You have died.";
         data.dialog.hidden = true;
@@ -165,13 +170,6 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
       }
     }
     return data.message || !data.battleOver || (data.chest && !data.collected) ? RenderingStatus.RENDERING : RenderingStatus.COMPLETED;
-  }
-
-  getArmorReduction(data: BattleScene) {
-    if (data.persist?.game.inventory?.["armor"]) {
-      return .6;
-    }
-    return 1;
   }
 
   getDodgeChance(data: BattleScene) {
@@ -182,7 +180,7 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
   }
 
   createKeyHandlerDown(data: BattleScene): (e: KeyboardEvent) => void {
-    const numOptions = this.attackOptions.length;
+    const numOptions = data.subMenu && data.inventory ? data.inventory.length : this.attackOptions.length;
     return (e) => {
       e.preventDefault();
       if (data.dialog?.hidden) {
@@ -199,11 +197,13 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
           break;
         case "Space":
           data.selectedIndex = data.menuIndex;
+          data.menuIndex = 0;
           if (data.subMenu) {
             if (data.selectedIndex === 0) {
-              if (data.hasCola) {
-                this.removeItem(data, 'cola');
-                this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) + 20, data.persist?.game.stats?.max ?? 100);
+              const item = data.inventory?.[0];
+              if (item) {
+                this.removeItem(data, item);
+                this.performAction(data, data.itemActions?.[item]);
                 this.playSFX(data.sounds?.pickup);
 
                 if (data.dialog) {
@@ -213,9 +213,10 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
                 }
               }
             } else if (data.selectedIndex === 1) {
-              if (data.hasBurger) {
-                this.removeItem(data, 'burger');
-                this.saveStats(data, data.persist?.game.stats?.max ?? 100, data.persist?.game.stats?.max ?? 100);
+              const item = data.inventory?.[1];
+              if (item) {
+                this.removeItem(data, item);
+                this.performAction(data, data.itemActions?.[item]);
                 this.playSFX(data.sounds?.pickup);
 
                 if (data.dialog) {
@@ -237,6 +238,7 @@ export default class BattleRenderer extends KeyboardRenderer<BattleScene> {
               data.failedEscape = false;
             } else if (data.selectedIndex === 1) {
               data.subMenu = true;
+              delete data.selectedIndex;
             } else if (data.selectedIndex === 2) {
               if (Math.random() < .3) {
                 data.message = "Your escape attempt has FAILED.";

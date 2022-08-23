@@ -20,6 +20,7 @@ async function start() {
       data.appIndex = index;
     }
   });
+  console.log(assembler.filesLoaded);
 
   registry.render(data);
 }

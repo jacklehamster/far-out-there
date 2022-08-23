@@ -29,7 +29,7 @@
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
       {
-        "text": "Your name is Blunk. Now get out there and start your quest!",
+        "text": "Your name is Blu. Now get out there and start your quest!",
         "x": 5, "y": 50,
         "width": 54, "height": 20,
         "box": true

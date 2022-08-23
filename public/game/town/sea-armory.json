@@ -1,0 +1,31 @@
+{
+  "type": "menuScene",
+  "title": "sea-armory",
+  "onStart": [{
+      "message": "Welcome! Here we sell super weapons!"
+  }],
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "sea-armory-dialog.json" },
+  "actions": [
+    { "action": "buy", "item": "trident", "cost": 700 },
+    { "action": "buy", "item": "goldcloth", "cost": 1500 },
+    { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/shop.mp3"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
+  }
+}

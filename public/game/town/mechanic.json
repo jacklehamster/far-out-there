@@ -1,0 +1,130 @@
+{
+  "type": "slideScene",
+  "title": "mechanic",
+
+  "onStart": [
+    {
+      "message": "Hi there. I'm the town mechanics. If you need any repairs, I'm the one you're looking for.",
+      "secretForbidden": ["knowrobot"]
+    },
+    {
+      "message": "You found a robot? Oh wow, I'd love to work on that. Yes! Bring it to me, I'll fix it up in no time. You can take this wheelcart with you.",
+      "secretForbidden": ["robot"],
+      "secretRequired": ["knowrobot"],
+      "itemsForbidden": ["wheelcart"]
+    },
+    {
+      "message": "I can't wait to see that robot. Bring it on!",
+      "secretForbidden": ["robot"],
+      "secretRequired": ["knowrobot"],
+      "itemsRequired": ["wheelcart"]
+    },
+    {
+      "message": "So this is the famous robot. Ok, let me work on it. Come back later.",
+      "secretRequired": ["robot"],
+      "secretForbidden": ["robotRepair"]
+    },
+    {
+      "message": "Give me some more time, proper engineering takes patience!",
+      "secretRequired": ["robotRepair"],
+      "secretForbidden": ["robotActive"]
+    },
+    {
+      "message": "The robot should be ready and operational.",
+      "secretRequired": ["robotRepair2"]
+    },
+    {
+      "message": "How's the robot doing?",
+      "secretRequired": ["robotActive"],
+      "itemsForbidden": ["wheelcart"]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "indoors.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["action", 0, {
+      "secretRequired": ["knowrobot"],
+      "secretForbidden": ["robot"],
+      "itemForbidden": ["wheelcart"],
+      "itemBonus": ["wheelcart"]
+    }],
+    ["action", 0, {
+      "secretRequired": ["robotRepair2"],
+      "secretForbidden": ["robotActive"],
+      "secrets": ["robotActive"],
+      "itemRemove": ["robot"]
+    }],
+    ["action", 0, {
+      "secretRequired": ["robotRepair"],
+      "secretForbidden": ["robotRepair2"],
+      "secrets": ["robotRepair2"],
+      "itemRemove": ["wheelcart"]
+    }],
+    ["action", 0, {
+      "secretRequired": ["robot"],
+      "secretForbidden": ["robotRepair"],
+      "secrets": ["robotRepair"]
+    }],
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

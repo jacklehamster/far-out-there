@@ -7,5 +7,4 @@ export type App = {
   scenes?: Scene[];
   sceneIndex?: number;
   appIndex?: number;
-  connections?: Record<string, Connection>;
 };

@@ -10,7 +10,8 @@ export default class Assembler {
   assetsManager: Record<string, string>;
   cache: Record<string, { blob: Blob; base64: string | ArrayBuffer | null; image: HTMLImageElement }> = {};
   pendingLoad: Record<string, ((response: any) => void)[]> = {};
-  responses: Record<string, any> = {}
+  responses: Record<string, any> = {};
+  filesLoaded: Record<string, any> = {};
 
   constructor(assetsManager: Record<string, string>) {
     this.assetsManager = assetsManager;
@@ -47,6 +48,9 @@ export default class Assembler {
           this.responses[path] = result;
           this.pendingLoad[path].forEach(callback => callback(result));
           delete this.pendingLoad[path];
+
+          this.filesLoaded[path.split(location.href)[1]] = result;
+
         });
       }
       this.pendingLoad[path].push(result => {
@@ -122,6 +126,7 @@ export default class Assembler {
     }
     if (obj.type === "image" && obj.path) {
       const { blob, base64, image } = await this.fetchWithCache(`${dir}${obj.path}`);
+      //      this.filesLoaded[`${dir}${obj.path}`] = blob;
 
       this.assetsManager[obj.path] = base64 as string;
 
@@ -159,8 +164,8 @@ export default class Assembler {
   async load(path: string, obj: any, property?: string): Promise<any> {
     // console.log(">>", path, property);
     const dir = path.substring(0, path.lastIndexOf("/") + 1);
-    const result = await this.internalFetch(path, response => response.text());
-    const json = JSON.parse(result);
+    const result = await this.internalFetch(path, response => response.json());
+    const json = JSON.parse(JSON.stringify(result));
     const replacedJson = this.paramsReplacement(json, obj.params);
     return await this.assemble(replacedJson, dir, property);
   }

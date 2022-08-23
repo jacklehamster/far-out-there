@@ -1,0 +1,103 @@
+{
+  "type": "slideScene",
+  "title": "sea-npc",
+
+  "onStart": [
+    {
+      "secrets": ["fishtaco"]
+    },
+    {
+      "action": "goto",
+      "destination": {
+        "scene": "outside",
+        "position": { "x": 3, "y": 22 }
+      },
+      "message": "Sure, I'll let you pass. You're my friend!",
+      "secretRequired": ["seapass"]
+    },
+    {
+      "action": "goto",
+      "destination": {
+        "scene": "outside",
+        "position": { "x": 3, "y": 22 }
+      },
+      "message": "Whoa, fishtaco! Thanks. I'll let you pass.",
+      "itemsRequired": [
+        "fishtaco"
+      ],
+      "secrets": ["seapass"],
+      "itemRemove": ["fishtaco"]
+    },
+    {
+      "action": "goto",
+      "destination": {
+        "scene": "seaport",
+        "position": { "x": 9, "y": 14 }
+      },
+      "message": "I heard Whokairs has the best tacos. Can you get me a fish taco? It's on their secret menu.",
+      "itemsForbidden": [
+        "fishtaco"
+      ],
+      "secretForbidden": ["seapass"]
+    }  
+  ],
+
+
+
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "../intro/scenery.png"
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

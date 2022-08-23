@@ -12,24 +12,8 @@
       "block": true
   },
   "tiles": { "type": "ref", "path": "outside-tiles.json" },
-  "heroes": [
-    {
-      "type": "hero",
-      "animation": {
-        "type": "animation",
-        "asset": {
-          "type": "image",
-          "path": "../far-out-16.png"
-        },
-        "sprite": {
-          "width": 16,
-          "height": 16
-        },
-        "frameRate": 16,
-        "range": [0, 3]
-      }
-    }
-  ],
+  "heroes": { "type": "ref", "path": "../town/heroes.json" },
+
   "onEnd": [
     ["fade", 0.5],
     ["goto"]

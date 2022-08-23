@@ -172,9 +172,7 @@ export class DialogRenderer {
   getRealText(scene: CanvasScene, text: string): string {
     const inventoryExtract = text.match(/{item.(\d+)}/);
     if (inventoryExtract) {
-      const items = Object.keys(scene.persist?.game.inventory ?? {});
-      items.sort();
-      return items[parseInt(inventoryExtract[1])] ?? "";
+      return scene.inventory?.[parseInt(inventoryExtract[1])] ?? "";
     }
 
     const extract = text.match(/{([^}]*)}/);

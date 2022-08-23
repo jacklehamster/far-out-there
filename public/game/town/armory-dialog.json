@@ -5,67 +5,67 @@
       { "text": "shield (500G)", "x": 7, "y": 0,
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         },
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.message != undefined"
+          "formula": "scene.message != undefined or scene.completed"
         }
       },
       { "text": "armor (1000G)", "x": 7, "y": 8,
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         },
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.message != undefined"
+          "formula": "scene.message != undefined or scene.completed"
         }
       },
       { "text": "exit", "x": 7, "y": 16,
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         },
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.message != undefined"
+          "formula": "scene.message != undefined or scene.completed"
         }
       },
       { "text": ">", "x": 1, "y": 0,
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.menuIndex != 0 or scene.message != undefined"
+          "formula": "scene.menuIndex != 0 or scene.message != undefined or scene.completed"
         },
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         }
       },
       { "text": ">", "x": 1, "y": 8,
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.menuIndex != 1 or scene.message != undefined"
+          "formula": "scene.menuIndex != 1 or scene.message != undefined or scene.completed"
         },
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         }
       },
       { "text": ">", "x": 1, "y": 16,
         "noScroll": true,
         "hidden": {
           "type": "condition",
-          "formula": "scene.menuIndex != 2 or scene.message != undefined"
+          "formula": "scene.menuIndex != 2 or scene.message != undefined or scene.completed"
         },
         "outline": {
           "type": "condition",
-          "formula": "scene.message == undefined"
+          "formula": "scene.message == undefined and not scene.completed"
         }
       },
       {

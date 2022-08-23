@@ -133,7 +133,7 @@ export default class SceneRenderer implements Renderer<App>, SceneChangeListener
   }
 
   gotoScene(app: App, name?: string, returnData?: ReturnData, position?: Position, direction?: number, tag?: string) {
-    console.log("TAG", tag, md5(tag ?? ''));
+    //    console.log("TAG", tag, md5(tag ?? ''));
     const nextIndex = app.scenes?.findIndex(scene => scene.title === name) ?? app.sceneIndex ?? 0;
     app.sceneIndex = nextIndex >= 0 ? nextIndex : app.sceneIndex ?? 0;
     if (app.scenes) {

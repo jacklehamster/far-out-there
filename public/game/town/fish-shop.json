@@ -1,0 +1,31 @@
+{
+  "type": "menuScene",
+  "title": "fish-shop",
+  "onStart": [{
+      "message": "Welcome to the fishing shop! Well... you can't fish these days due to the high wind, but we do sell fish!"
+  }],
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "fish-shop-dialog.json" },
+  "actions": [
+    { "action": "buy", "item": "fish", "cost": 150 },
+    { "action": "buy", "item": "fish", "cost": 180 },
+    { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/shop.mp3"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
+  }
+}

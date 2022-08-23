@@ -1,0 +1,113 @@
+{
+  "type": "slideScene",
+  "title": "town2-bot",
+
+  "onStart": [
+    {
+      "message": "(there is a robot in the middle of the lab. it's too heavy to carry)",
+      "itemsForbidden": [
+        "wheelcart"
+      ],
+      "secretForbidden": [
+        "robot"
+      ],
+      "secrets": ["knowrobot"]
+    },
+    {
+      "message": "(you use the wheelcart to bring the robot)",
+      "itemsRequired": [
+        "wheelcart"
+      ],
+      "secretForbidden": [
+        "robot"
+      ]
+    },
+    {
+      "message": "(nothing left here)",
+      "secretRequired": [
+        "robot"
+      ]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "indoors.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [0, 0]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.robot"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [31, 31]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["action", 0, {
+      "action": "addHero",
+      "hero": 1,
+      "secretForbidden": [
+        "robot"
+      ],
+      "itemsRequired": [
+        "wheelcart"
+      ],
+      "secrets": ["robot"],
+      "itemBonus": ["robot"]
+    }],
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

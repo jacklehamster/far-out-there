@@ -11,6 +11,30 @@
     "4]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 11 } }],
       "portal": "town", "portalPosition": {"x": 6, "y": 15}
     },
+    "[A": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 0 } }],
+      "portal": "seaport", "portalPosition": {"x": 6, "y": 5}
+    },
+    "B]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 1 } }],
+      "portal": "seaport", "portalPosition": {"x": 6, "y": 5}
+    },
+    "[C": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 10 } }],
+      "portal": "seaport", "portalPosition": {"x": 6, "y": 5}
+    },
+    "D]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 11 } }],
+      "portal": "seaport", "portalPosition": {"x": 8, "y": 14}
+    },
+    "[5": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 0 } }],
+      "portal": "town2"
+    },
+    "6]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 1 } }],
+      "portal": "town2"
+    },
+    "[7": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 10 } }],
+      "portal": "town2"
+    },
+    "8]": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 11 } }],
+      "portal": "town2"
+    },
     " s": { "images": [{ "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 3 } }],
       "startPosition": true
     },
@@ -52,6 +76,12 @@
     },
     "\\~": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 13 } }],
       "portal": "dark-cave"
+    },
+    "!/": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 12 } }],
+      "portal": "dark-cave2"
+    },
+    "\\!": { "images": [{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 13 } }],
+      "portal": "dark-cave2"
     },
     "/~": { "images": [
         { "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 14 } },

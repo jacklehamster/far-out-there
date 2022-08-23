@@ -6,6 +6,8 @@ export default interface Action {
   destination?: ReturnData;
   itemsRequired?: string[];
   itemsForbidden?: string[];
+  secretRequired?: string[];
+  secretForbidden?: string[];
   message: string;
   itemBonus?: string[];
   itemRemove?: string[];
@@ -15,4 +17,9 @@ export default interface Action {
 
   item?: string;
   cost?: number;
+  amount?: number;
+  secrets?: string[];
+  hero?: number;
+
+  actions?: Action[];
 }

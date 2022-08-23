@@ -1,19 +1,24 @@
+import Condition from "../../core/condition";
 import { Position } from "../../scenes/canvas-scene";
 import MapScene, { Tile } from "../../scenes/map-scene";
 import Animation from "./animation";
 
 export default class Hero {
   type = "hero";
+  id: number;
   position?: Position;
   fromPosition: Position = { x: 0, y: 0 };
   animation: Animation;
   moveTime?: DOMHighResTimeStamp;
   moveDuration?: number;
+  hidden?: Condition | boolean;
   #tempPosition: Position = { x: 0, y: 0 };
 
-  constructor({ animation, moveDuration }: { animation: Animation; moveDuration: number }) {
+  constructor({ id, animation, moveDuration, hidden }: { id: number, animation: Animation; moveDuration: number, hidden?: Condition | boolean; }) {
+    this.id = id;
     this.animation = animation;
     this.moveDuration = moveDuration;
+    this.hidden = hidden;
   }
 
   moveTo(x: number, y: number, time: DOMHighResTimeStamp, immediate?: boolean) {
@@ -22,9 +27,12 @@ export default class Hero {
     if (!this.position) {
       this.position = { x: 0, y: 0 };
     }
-    this.moveTime = immediate ? undefined : time;
-    this.position.x = x;
-    this.position.y = y;
+
+    if (this.position.x !== x || this.position.y !== y) {
+      this.moveTime = immediate ? undefined : time;
+      this.position.x = x;
+      this.position.y = y;
+    }
   }
 
   getTileUnderneath(map: MapScene): Tile | undefined {

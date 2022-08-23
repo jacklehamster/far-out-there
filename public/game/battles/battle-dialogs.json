@@ -14,7 +14,7 @@
         },
         "noScroll": true
       },
-      { "text": "HP {foeLife}", "x": 39, "y": 0,
+      { "text": "hp {foeLife}", "x": 39, "y": 0,
         "outline": {
           "type": "condition",
           "formula": "scene.battleOver == false"
@@ -26,7 +26,19 @@
         },
         "noScroll": true
       },
-      { "text": "HP {persist.game.stats.hp}", "x": 1, "y": 44,
+      { "text": "Blu", "x": 1, "y": 36,
+        "outline": {
+          "type": "condition",
+          "formula": "scene.battleOver == false and not scene.failedEscape"
+        },
+        "fixed": true,
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.battleOver or scene.failedEscape"
+        },
+        "noScroll": true
+      },
+      { "text": "hp {persist.game.stats.heroes[hero + 1].hp}", "x": 1, "y": 44,
         "outline": {
           "type": "condition",
           "formula": "scene.battleOver == false and not scene.failedEscape"
@@ -86,16 +98,16 @@
         "box": true, "fixed": true
       },
 
-      { "text": "cola", "x": 7, "y": 53,
+      { "text": "{item.0}", "x": 7, "y": 53,
         "hidden": {
           "type": "condition",
-          "formula": "scene.subMenu == undefined or not scene.hasCola"
+          "formula": "scene.subMenu == undefined"
         }
       },
-      { "text": "burger", "x": 26, "y": 53,
+      { "text": "{item.1}", "x": 26, "y": 53,
         "hidden": {
           "type": "condition",
-          "formula": "scene.subMenu == undefined or not scene.hasBurger"
+          "formula": "scene.subMenu == undefined"
         }
       },
       { "text": "x", "x": 55, "y": 53,

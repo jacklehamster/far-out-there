@@ -88,5 +88,7 @@
     "path": "../music/battle.mp3"
   },
 
-  "sounds": { "type": "ref", "path": "battle-sounds.json" }
+  "sounds": { "type": "ref", "path": "battle-sounds.json" },
+
+  "itemActions": { "type": "ref", "path": "item-actions.json" }
 }

@@ -1,0 +1,9 @@
+{
+  "soda": {
+    "action": "heal",
+    "amount": 40
+  },
+  "taco": {
+    "action": "healFully"
+  }
+}

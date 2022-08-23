@@ -1,0 +1,94 @@
+{
+  "title": "battle-squid",
+  "type": "battleScene",
+
+  "xp": 500,
+  "gold": 250,
+
+  "foeMaxLife": 200,
+  "foeStrength": 30,
+
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "battle-dialogs.json", "params": { "{name}": "{foe.name}" } },
+
+  "background": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../outside/landscape.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "range": [0, 0]
+  },
+  
+  "strike": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "sword-strike.png"
+    },
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [0, 7],
+    "position": { "x": 0, "y": 5 }
+  },
+
+  "hurt": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "../town/npc-sheet.png"
+    },
+    "position": "{position}",
+    "sprite": {
+      "width": 64,
+      "height": 64
+    },
+    "frameRate": 20,
+    "range": [15, 16]
+  },
+
+  "foe": {
+    "name": "Squido",
+    "idle": { "type": "ref", "path": "animation.json", "params": { "{range}": [24,24] } },
+    "attack": { "type": "ref", "path": "animation.json", "params": { "{range}": [24,30] } },
+    "hurt": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "position": "{position}",
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 20,
+      "range": [23, 24]
+    }
+  },
+
+  "chestOpen": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 40] } },
+  "chestClose": { "type": "ref", "path": "battle-chest.json", "params": { "{range}": [38, 38] } },
+
+  "onEnd": [
+    ["fade", 0.5],
+    ["checkGameOver", "game-over-death"],
+    ["return"]
+  ],
+  
+  "music": {
+    "type": "music",
+    "path": "../music/battle.mp3"
+  },
+
+  "sounds": { "type": "ref", "path": "battle-sounds.json" },
+
+  "itemActions": { "type": "ref", "path": "item-actions.json" }
+}

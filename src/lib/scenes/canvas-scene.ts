@@ -1,10 +1,11 @@
 import Scene from "../core/scene";
+import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
 import BlobType from "../renderer/types/blob";
 import FontSheet from "../renderer/types/font-sheet";
 import { Label as Label } from "../renderer/types/label";
 
-type Step = [string, number | undefined];
+type Step = [string, number | undefined, Action | undefined];
 
 export const LEVEL_PROGRESSION = [
   { xp: 0, hp: 100, attack: 1 },
@@ -24,15 +25,19 @@ export interface Dialog {
 export interface PersistData {
   game: {
     stats?: {
-      hp: number;
-      max: number;
-      xp: number;
+      heroes: {
+        hp: number;
+        max: number;
+        xp: number;
+        level: number;
+        attack: number;
+        xpNext: number;
+        active?: boolean;
+      }[];
       gold: number;
-      level: number;
-      attack: number;
-      xpNext: number;
     }
     inventory?: Record<string, number>;
+    secret?: Record<string, number>;
     [key: string]: any;
   }
   [key: string]: any;
@@ -46,13 +51,15 @@ export class Slide {
   to: Position = { x: 0, y: 0 };
   duration?: number;
   scale?: number;
+  hidden: boolean;
 
-  constructor({ asset, from, to, duration, animation }: { asset: BlobType; animation?: Animation; from: Position; to: Position; duration: number }) {
+  constructor({ asset, from, to, duration, animation, hidden }: { asset: BlobType; animation?: Animation; from: Position; to: Position; duration: number; hidden?: boolean }) {
     this.asset = asset;
     this.animation = animation;
     this.from = from;
     this.to = to;
     this.duration = duration;
+    this.hidden = hidden ?? false;
   }
 }
 export interface Position {
@@ -80,6 +87,8 @@ export default class CanvasScene extends Scene {
   subMenu?: boolean;
   restartOnDone?: boolean;
 
-  hasCola?: boolean;
-  hasBurger?: boolean;
+  inventory?: string[];
+  secret?: Record<string, number>;
+  itemActions?: Record<string, Action>;
+  completed?: boolean;
 }

@@ -2,14 +2,26 @@
   "type": "menuScene",
   "title": "food-shop",
   "onStart": [{
-      "message": "Would you like to try our new wurmy burger?"
+      "message": "Would you like to try our new wurmy taco?",
+      "secretForbidden": ["fishtaco"]
+  }, {
+      "message": "Oh! so you've heard about our fishtaco?",
+      "secretRequired": ["fishtaco"]    
   }],
   "slides": { "type": "ref", "path": "shop-slides.json" },
-  "numOptions": 3,
+  "numOptions": 4,
   "dialog": { "type": "ref", "path": "food-shop-dialog.json" },
   "actions": [
-    { "action": "buy", "item": "cola", "cost": 40 },
-    { "action": "buy", "item": "burger", "cost": 100 },
+    { "action": "buy", "item": "soda", "cost": 40 },
+    { "action": "buy", "item": "taco", "cost": 100 },
+    { "actions": [
+        { "action": "buy", "message": "Good fish you got there! Ok I'll make you a nice fishtaco, free of charge.",
+          "item": "fishtaco", "cost": 0, "secretRequired": ["fishtaco"], "itemsRequired": ["fish"], "itemRemove": ["fish"] },
+        { "action": "noop", "message": "We ran out of fish. If you bring me some fish from the seaport, I'll make you a nice fishtaco.", "itemsForbidden": ["fish"],
+          "secretRequired": ["fishtaco"]
+        },
+        { "action": "noop", "message": "Please choose an item on our menu.", "secretForbidden": ["fishtaco"] }
+    ]},
     { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
   ],
   "onEnd": [
@@ -19,7 +31,7 @@
   ],
   "music": {
     "type": "music",
-    "path": "../music/town.mp3"
+    "path": "../music/shop.mp3"
   },
 
   "sounds": {

@@ -1,3 +1,4 @@
+import Action from "../renderer/types/action";
 import Animation from "../renderer/types/animation";
 import CanvasScene from "./canvas-scene";
 
@@ -38,4 +39,5 @@ export default class BattleScene extends CanvasScene {
   xp?: number;
   gold?: number;
   collected?: boolean;
+  hero?: number;
 }

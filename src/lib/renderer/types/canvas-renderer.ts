@@ -7,6 +7,8 @@ import Music from "./music";
 import { ReturnData } from "./return-data";
 import Action from "./action";
 import Animation from "./animation";
+import Condition from "../../core/condition";
+import Scene from "../../core/scene";
 
 export enum RenderingStatus {
   RENDERING,
@@ -14,6 +16,10 @@ export enum RenderingStatus {
 }
 
 const DEFAULT_CROP = [0, 0, 0, 0];
+
+declare global {
+  interface Window { renderer: Object, scene: Scene }
+}
 
 
 export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T> {
@@ -74,6 +80,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     data.step = 0;
     delete data.stepProgress;
     delete data.startTime;
+    data.completed = false;
 
     delete data.scroll;
     delete data.scrollStart;
@@ -88,7 +95,8 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
 
     const persist = JSON.parse(localStorage.getItem(`persist_game`) ?? "{}");
     data.persist = persist;
-    this.updateColaBurger(data);
+    this.updateInventory(data);
+    this.updateSecret(data);
   }
 
   saveProp(data: T, prop: string, value: any) {
@@ -105,29 +113,43 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     return data?.persist?.[data.title ?? '']?.[prop];
   }
 
+  initializeHero(data: T) {
+    this.getHeroStat(data, 0);
+  }
+
   updateStatsWithLevelProgression(data: T) {
     if (!data.persist) {
       return false;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
-    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0, xp: 0, gold: 0, level: 0, attack: 0, xpNext: 0 });
-    for (let i = LEVEL_PROGRESSION.length - 1; i >= 0; i--) {
-      const progression = LEVEL_PROGRESSION[i];
-      if (stats.xp >= progression.xp) {
-        const level = i + 1;
-        if (stats.level < level) {
-          stats.level = level;
-          stats.attack = progression.attack;
-          stats.max = stats.hp = progression.hp;
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
+    let didUpdate = false;
+    stats.heroes.forEach(heroStat => {
+      for (let i = LEVEL_PROGRESSION.length - 1; i >= 0; i--) {
+        const progression = LEVEL_PROGRESSION[i];
+        if (heroStat.xp >= progression.xp) {
+          const level = i + 1;
+          if (heroStat.level < level) {
+            heroStat.level = level;
+            heroStat.attack = progression.attack;
+            heroStat.max = heroStat.hp = progression.hp;
 
-          localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
-          this.saveTime(data);
-          return true;
+            localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+            this.saveTime(data);
+            didUpdate = true;
+          }
         }
-        return false;
       }
-    }
-    return false;
+    });
+    return didUpdate;
+  }
+
+  getHeroStat(data: T, hero: number) {
+    const dataPersist = data.persist!;
+    const gameData = dataPersist.game ?? (dataPersist.game = {});
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
+    const heroStat = stats.heroes[hero] ?? (stats.heroes[hero] = { hp: 0, max: 0, xp: 0, level: 0, attack: 0, xpNext: 0, active: true });
+    return heroStat;
   }
 
   updateLevelProgression(data: T) {
@@ -135,32 +157,39 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       return;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
-    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0, xp: 0, gold: 0, level: 0, attack: 0, xpNext: 0 });
-    const nextProgression = LEVEL_PROGRESSION[stats.level];
-    stats.xpNext = (nextProgression?.xp ?? 10000000) - stats.xp;
-    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
-    this.saveTime(data);
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
+    stats.heroes.forEach(heroStat => {
+      const nextProgression = LEVEL_PROGRESSION[heroStat.level];
+      const xpNext = (nextProgression?.xp ?? 10000000) - heroStat.xp;
+      if (xpNext != heroStat.xpNext) {
+        heroStat.xpNext = xpNext;
+        localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+        this.saveTime(data);
+      }
+    });
   }
 
-  saveStats(data: T, hp: number, max: number) {
+  saveStats(data: T, hp: number, max: number, hero: number) {
     if (!data.persist) {
       return;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
-    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0, xp: 0, gold: 0, level: 0, attack: 0, xpNext: 0 });
-    stats.max = max;
-    stats.hp = Math.max(0, Math.min(hp, max));
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
+    const heroStat = this.getHeroStat(data, hero);
+    heroStat.max = max;
+    heroStat.hp = Math.max(0, Math.min(hp, max));
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
   }
 
-  addXP(data: T, xp: number) {
+  addXP(data: T, xp: number, hero: number) {
     if (!data.persist) {
       return;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
-    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0, xp: 0, gold: 0, level: 0, attack: 0, xpNext: 0 });
-    stats.xp += xp;
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
+    const heroStat = stats.heroes[hero] ?? (stats.heroes[hero] = { hp: 0, max: 0, xp: 0, level: 0, attack: 0, xpNext: 0 });
+    heroStat.xp += xp;
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
     this.playSFX(data.sounds?.jingle);
@@ -171,18 +200,30 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       return;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
-    const stats = gameData.stats ?? (gameData.stats = { hp: 0, max: 0, xp: 0, gold: 0, level: 0, attack: 0, xpNext: 0 });
+    const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
     stats.gold += gold;
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
   }
 
-  addHp(data: T, hp: number) {
-    this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) + hp, data.persist?.game.stats?.max ?? 0);
+  addSecret(data: T, secret: string) {
+    if (!data.persist) {
+      return;
+    }
+    const gameData = data.persist.game ?? (data.persist.game = {});
+    const secrets = gameData.secret ?? (gameData.secret = {});
+    secrets[secret] = (secrets[secret] ?? 0) + 1;
+    localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+    this.saveTime(data);
+    this.updateSecret(data);
   }
 
-  removeHp(data: T, hp: number) {
-    this.saveStats(data, (data.persist?.game.stats?.hp ?? 0) - hp, data.persist?.game.stats?.max ?? 0);
+  addHp(data: T, hp: number, hero: number) {
+    this.saveStats(data, (data.persist?.game.stats?.heroes[hero].hp ?? 0) + hp, data.persist?.game.stats?.heroes[hero].max ?? 0, hero);
+  }
+
+  removeHp(data: T, hp: number, hero: number) {
+    this.saveStats(data, (data.persist?.game.stats?.heroes[hero].hp ?? 0) - hp, data.persist?.game.stats?.heroes[hero].max ?? 0, hero);
   }
 
   saveGameProp(data: T, prop: string, value: any) {
@@ -204,12 +245,24 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     inventory[item] = (inventory[item] ?? 0) + 1;
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
-    this.updateColaBurger(data);
+    this.updateInventory(data);
   }
 
-  updateColaBurger(data: T) {
-    data.hasCola = (data.persist?.game.inventory?.cola ?? 0) > 0;
-    data.hasBurger = (data.persist?.game.inventory?.burger ?? 0) > 0;
+  updateInventory(data: T) {
+    data.inventory = Object.keys(data.persist?.game?.inventory ?? {})
+      .filter(item => !data.itemActions || data.itemActions[item])
+      .filter(item => (data.persist?.game?.inventory?.[item] ?? 0) > 0)
+
+    data.inventory.sort((item1, item2) => {
+      if (item1.length != item2.length) {
+        return item1.length - item2.length;
+      }
+      return item1.localeCompare(item2);
+    });
+  }
+
+  updateSecret(data: T) {
+    data.secret = data.persist?.game?.secret ?? {};
   }
 
   removeItem(data: T, item: string) {
@@ -224,7 +277,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
-    this.updateColaBurger(data);
+    this.updateInventory(data);
   }
 
   saveTime(data: T) {
@@ -237,6 +290,8 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
   }
 
   render(data: T): void {
+    window.renderer = this;
+    window.scene = data;
     if (!data.persistState) {
       this.reset(data);
     }
@@ -260,6 +315,10 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     });
   }
 
+  getRenderingStatus(): RenderingStatus {
+    return RenderingStatus.RENDERING;
+  }
+
   startLoop(data: T): void {
     const loop = (timestamp: DOMHighResTimeStamp): void => {
       this.requestID = requestAnimationFrame(loop);
@@ -268,6 +327,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         this.performStart(data);
       }
       const status = this.performRendering(data, timestamp);
+      if (!data.completed && status === RenderingStatus.COMPLETED) {
+        data.completed = true;
+      }
       if (data.dialog) {
         this.dialogRenderer.render(data, timestamp);
       }
@@ -330,7 +392,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       if (!data.step) {
         data.step = 1;
       }
-      const [command, param] = data.onEnd[data.step - 1];
+      const [command, param, action] = data.onEnd[data.step - 1];
       switch (command) {
         case "wait":
           if (!data.stepProgress) {
@@ -390,7 +452,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           break;
         case "checkGameOver":
           {
-            if (!data.persist?.game.stats?.hp) {
+            if (data.persist?.game.stats?.heroes.every(({ hp }) => hp <= 0)) {
               const listeners = [];
               for (let listener of this.listeners) {
                 listeners.push(listener);
@@ -424,7 +486,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           }
           break;
         case "healFully":
-          this.saveStats(data, (data?.persist?.game?.stats?.max ?? 100), (data?.persist?.game?.stats?.max ?? 100));
+          data.persist?.game.stats?.heroes.forEach((heroStat, hero) => {
+            this.saveStats(data, (heroStat.max ?? 100), (heroStat.max ?? 100), hero);
+          });
           this.playSFX(data.sounds?.heal);
           data.step++;
           break;
@@ -433,6 +497,15 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
             data.dialog.hidden = true;
           }
           data.step++;
+          break;
+        case "action":
+          this.performAction(data, action);
+          data.step++;
+          break;
+        case "waitMessage":
+          if (!data.message) {
+            data.step++;
+          }
           break;
       }
     }
@@ -460,10 +533,18 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     if (!action) {
       return false;
     }
+    action?.actions?.forEach(action => this.performAction(data, action, chance));
+
     if (action.itemsForbidden?.some(item => data.persist?.game?.inventory?.[item])) {
       return false;
     }
-    if (action.itemsRequired && !action.itemsRequired?.some(item => data.persist?.game?.inventory?.[item])) {
+    if (action.itemsRequired && !action.itemsRequired.some(item => data.persist?.game?.inventory?.[item])) {
+      return false;
+    }
+    if (action.secretForbidden?.some(item => data.persist?.game?.secret?.[item])) {
+      return false;
+    }
+    if (action.secretRequired && !action.secretRequired.some(secret => data.persist?.game?.secret?.[secret])) {
       return false;
     }
     if (chance && action.chance) {
@@ -492,6 +573,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     if (action.subMenu) {
       data.subMenu = true;
     }
+    action.secrets?.forEach(secret => {
+      this.addSecret(data, secret);
+    });
 
     switch (action?.action) {
       case "clearCache":
@@ -505,7 +589,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       case "showStats": {
         const stats = data.persist?.game.stats;
         if (stats) {
-          data.message = `HP: ${stats.hp}/${stats.max}. ATK: ${this.getAttack(data)}. XP: ${stats.xp}. LEVEL: ${stats.level}`;
+          data.message = `HP: ${stats.heroes[0].hp}/${stats.heroes[0].max}. ATK: ${this.getAttack(data, action.hero ?? 0)}. DEF: ${Math.floor(1 + (1 - this.getDefense(data, action.hero ?? 0)) * 10)}. XP: ${stats.heroes[0].xp}. LEVEL: ${stats.heroes[0].level}`;
         }
         break;
       }
@@ -521,7 +605,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         break;
       }
       case "saveStats":
+        this.initializeHero(data);
         this.updateStatsWithLevelProgression(data);
+        this.updateLevelProgression(data);
         break;
       case "addGold":
         this.addGold(data, 100);
@@ -529,18 +615,19 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         data.restartOnDone = true;
         break;
       case "buy":
-        if (action.cost) {
-          if (data.persist?.game.stats?.gold && data.persist.game.stats.gold >= action.cost) {
-            this.addGold(data, -action.cost);
-            this.playSFX(data.sounds?.pickup);
-            this.pickItem(data, action.item, `Here's your ${action.item}. Anything else?`);
-            data.justPickedUp = false;
-          } else {
-            data.message = `You don't have ${action.cost} gold!`;
-          }
-          data.restartOnDone = true;
+        if (data.persist?.game.stats?.gold && data.persist.game.stats.gold >= (action.cost ?? 0)) {
+          this.addGold(data, -(action.cost ?? 0));
+          this.playSFX(data.sounds?.pickup);
+          this.pickItem(data, action.item, action.message ?? `Here's your ${action.item}. Anything else?`);
+          data.justPickedUp = false;
+        } else {
+          data.message = `You don't have ${action.cost} gold!`;
         }
+        data.restartOnDone = true;
         return false;
+      case "noop":
+        data.restartOnDone = true;
+        break;
       case "hideDialogs":
         if (data.dialog) {
           data.dialog.hidden = true;
@@ -551,19 +638,47 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           data.dialog.lastDialog = true;
         }
         break;
+      case "healFully":
+        this.saveStats(data, data.persist?.game.stats?.heroes[action.hero ?? 0].max ?? 100, data.persist?.game.stats?.heroes[action.hero ?? 0].max ?? 100, action.hero ?? 0);
+        this.playSFX(data.sounds?.heal);
+        break;
+      case "heal":
+        this.saveStats(data, (data?.persist?.game?.stats?.heroes[action.hero ?? 0].hp ?? 0) + (action.amount ?? 0), (data?.persist?.game?.stats?.heroes[action.hero ?? 0].max ?? 100), action.hero ?? 0);
+        this.playSFX(data.sounds?.heal);
+        break;
+      case "addHero":
+        this.getHeroStat(data, action.hero ?? 0);
+        break;
     }
     return true;
   }
 
   getWeaponAttack(data: T) {
+    if (data.persist?.game.inventory?.["trident"]) {
+      return 15;
+    }
     if (data.persist?.game.inventory?.["sword"]) {
       return 10;
     }
     return 5;
   }
 
-  getAttack(data: T) {
-    return Math.floor(this.getWeaponAttack(data) * (data.persist?.game.stats?.attack ?? 1));
+  getArmorReduction(data: T) {
+    if (data.persist?.game.inventory?.["goldcloth"]) {
+      return .5;
+    }
+    if (data.persist?.game.inventory?.["armor"]) {
+      return .7;
+    }
+    return 1;
+  }
+
+  getDefense(data: T, hero: number) {
+    return this.getArmorReduction(data);
+  }
+
+  getAttack(data: T, hero: number) {
+    return Math.floor(this.getWeaponAttack(data) * (data.persist?.game.stats?.heroes[hero].attack ?? 1));
   }
 
   pickItem(data: T, item?: string, messageOverride?: string) {
@@ -609,6 +724,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       let minRateEllapsed = 1;
       const timeEllapsed = timestamp - (data.startTime ?? 0);
       for (let slide of slides) {
+        if (Condition.eval(slide.hidden, { scene: data })) {
+          continue;
+        }
         const rateEllapsed = Math.min(slide?.duration ? timeEllapsed / (slide.duration * 1000) : 1, 1);
         const x = (slide.to.x * rateEllapsed + slide.from.x * (1 - rateEllapsed));
         const y = (slide.to.y * rateEllapsed + slide.from.y * (1 - rateEllapsed));

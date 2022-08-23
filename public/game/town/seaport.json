@@ -1,0 +1,30 @@
+{
+  "title": "seaport",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "seaport.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "../outside/outside-tile.json", "params": { "{frame}": 6 } }],
+      "block": true
+  },
+  "tiles": { "type": "ref", "path": "seaport-tiles.json" },
+  "heroes": { "type": "ref", "path": "heroes.json" },
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  },
+  "spaceAction": {
+    "action": "goto",
+    "destination": {
+      "scene": "town-menu"
+    }
+  }
+}

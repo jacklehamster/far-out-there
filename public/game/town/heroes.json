@@ -1,6 +1,7 @@
 [
     {
       "type": "hero",
+      "id": 0,
       "animation": {
         "type": "animation",
         "asset": {
@@ -14,5 +15,81 @@
         "frameRate": 16,
         "range": [0, 3]
       }
+    },
+    {
+      "type": "hero",
+      "id": 1,
+      "hidden": {
+        "type": "condition",
+        "formula": "scene.secret.robotActive == undefined"
+      },
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [4, 7]
+      }
+    },
+    {
+      "type": "hero",
+      "id": 1,
+      "hidden": {
+        "type": "condition",
+        "formula": "scene.secret.activeRobot != undefined or scene.secret.robotRepair != undefined"
+      },
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [19, 22]
+      }
+    },
+    {
+      "type": "hero",
+      "id": 2,
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [8, 11]
+      }
+    },
+    {
+      "type": "hero",
+      "id": 3,
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [12, 15]
+      }
     }
-  ]
+]

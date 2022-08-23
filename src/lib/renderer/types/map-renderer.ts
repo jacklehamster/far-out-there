@@ -1,6 +1,8 @@
+import Condition from "../../core/condition";
 import MapScene from "../../scenes/map-scene";
 import KeyboardRenderer from "../keyboard-renderer";
 import { RenderingStatus } from "./canvas-renderer";
+import Hero from "./hero";
 import { ReturnData } from "./return-data";
 
 const DEFAULT_CROP = [0, 0, 0, 0];
@@ -11,9 +13,11 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
 
   reset(data: MapScene): void {
     super.reset(data);
-    if (data.heroes[0].position) {
-      delete data.heroes[0].position;
-    }
+    data.heroes.forEach(hero => {
+      if (hero.position) {
+        delete hero.position;
+      }
+    });
     delete data.moveAction;
     data.stepsTaken = 0;
   }
@@ -115,6 +119,20 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
           if (mainHero.canMoveBy(data.moveAction.x, data.moveAction.y, data)) {
             mainHero.moveBy(data.moveAction.x, data.moveAction.y, timestamp);
             data.movePending = true;
+
+            let leadingHero = mainHero;
+            for (let i = data.heroes.indexOf(leadingHero) + 1; i < data.heroes.length; i++) {
+              const nextHero = data.heroes[i];
+              if (nextHero) {
+                const heroStat = data.persist?.game.stats?.heroes[nextHero.id];
+                if (!heroStat?.active || Condition.eval(nextHero.hidden, { scene: data })) {
+                  continue;
+                }
+                nextHero.moveTo(leadingHero.fromPosition.x, leadingHero.fromPosition.y, timestamp);
+                leadingHero = nextHero;
+              }
+            }
+
             this.autoSave(data);
           }
         }
@@ -147,7 +165,18 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
       }
     }
 
-    data.heroes.forEach(hero => {
+    const sortedHeroes = [...data.heroes]
+      .filter(({ id }) => data.persist?.game.stats?.heroes[id ?? 0]?.active)
+      .filter(({ hidden }) => !Condition.eval(hidden, { scene: data }))
+      .sort((hero1: Hero, hero2: Hero) => {
+        const pos1 = hero1.getPosition(timestamp);
+        const pos2 = hero2.getPosition(timestamp);
+        if (pos1?.y === pos2?.y) {
+          return data.heroes.indexOf(hero2) - data.heroes.indexOf(hero1);
+        }
+        return (pos1?.y ?? 0) < (pos2?.y ?? 0) ? -1 : 1;
+      });
+    sortedHeroes.forEach(hero => {
       if (this.context && hero.animation?.asset?.image) {
         const [x, y, width, height] = hero.animation.getCrop(
           hero.isMoving(timestamp) ? hero.animation.getFrame(timestamp, hero.moveTime) % hero.animation.getTotalFrames() : 1);

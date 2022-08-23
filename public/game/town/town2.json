@@ -1,0 +1,30 @@
+{
+  "title": "town2",
+  "type": "mapScene",
+  "grid": {
+    "type": "text",
+    "path": "town2.txt",
+    "splitCells": true
+  },
+  "gridWidth": 10,
+  "gridHeight": 10,
+  "defaultTile": { "images": [{ "type": "ref", "path": "tile.json", "params": { "{frame}": 21 } }],
+    "portal": "outside", "portalPosition": { "x": 9, "y": 8 }
+  },
+  "tiles": { "type": "ref", "path": "town2-tiles.json" },
+  "heroes": { "type": "ref", "path": "heroes.json" },
+  "onEnd": [
+    ["fade", 0.5],
+    ["goto"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  },
+  "spaceAction": {
+    "action": "goto",
+    "destination": {
+      "scene": "town-menu"
+    }
+  }
+}
