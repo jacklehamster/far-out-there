@@ -10,6 +10,7 @@ export interface Tile {
   portal?: string;
   portalPosition?: Position;
   portalDirection?: number;
+  portalDisabled?: boolean;
 }
 
 export default class MapScene extends CanvasScene {

@@ -19,6 +19,6 @@
   ],
   "music": {
     "type": "music",
-    "path": "../music/town.mp3"
+    "path": "../music/outside.mp3"
   }
 }

@@ -99,10 +99,28 @@
       ],
       "itemsRequired": [
         "wheelcart"
+      ]
+    }],
+    ["action", 0, {
+      "action": "deactivateHero",
+      "hero": 1,
+      "secretForbidden": [
+        "robot"
+      ],
+      "itemsRequired": [
+        "wheelcart"
+      ]
+    }],
+    ["action", 0, {
+      "secretForbidden": [
+        "robot"
+      ],
+      "itemsRequired": [
+        "wheelcart"
       ],
       "secrets": ["robot"],
       "itemBonus": ["robot"]
-    }],
+    }],        
     ["fade", 0.5],
     ["return"]
   ],

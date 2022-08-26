@@ -9,6 +9,7 @@ import Action from "./action";
 import Animation from "./animation";
 import Condition from "../../core/condition";
 import Scene from "../../core/scene";
+import { Achievement } from "../achievements/achievement";
 
 export enum RenderingStatus {
   RENDERING,
@@ -31,12 +32,17 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
   audio: HTMLAudioElement | null;
   audioSFX: HTMLAudioElement | null;
   saveTimeout: any;
+  achievement?: Achievement;
 
   constructor() {
     this.canvas = document.getElementById("canvas") as HTMLCanvasElement;
     this.context = this.canvas?.getContext("2d");
     this.audio = document.getElementById("audio") as HTMLAudioElement;
     this.audioSFX = document.getElementById("audioSFX") as HTMLAudioElement;
+  }
+
+  getAchievement() {
+    return this.achievement ?? (this.achievement = new Achievement());
   }
 
   restart(data: T, timestamp: DOMHighResTimeStamp): void {
@@ -82,6 +88,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     delete data.startTime;
     data.completed = false;
 
+    delete data.fadeStart;
     delete data.scroll;
     delete data.scrollStart;
     delete data.scrollBackwards;
@@ -97,6 +104,10 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     data.persist = persist;
     this.updateInventory(data);
     this.updateSecret(data);
+
+    if (data.newgrounds) {
+      this.getAchievement().loginCheck(data.newgrounds.credentials);
+    }
   }
 
   saveProp(data: T, prop: string, value: any) {
@@ -113,34 +124,36 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     return data?.persist?.[data.title ?? '']?.[prop];
   }
 
-  initializeHero(data: T) {
-    this.getHeroStat(data, 0);
+  initializeHero(data: T, hero: number) {
+    this.getHeroStat(data, hero);
   }
 
-  updateStatsWithLevelProgression(data: T) {
+  updateStatsWithLevelProgression(data: T, hero: number) {
     if (!data.persist) {
       return false;
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
     const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
     let didUpdate = false;
-    stats.heroes.forEach(heroStat => {
-      for (let i = LEVEL_PROGRESSION.length - 1; i >= 0; i--) {
-        const progression = LEVEL_PROGRESSION[i];
-        if (heroStat.xp >= progression.xp) {
-          const level = i + 1;
-          if (heroStat.level < level) {
-            heroStat.level = level;
-            heroStat.attack = progression.attack;
-            heroStat.max = heroStat.hp = progression.hp;
+    const heroStat = stats.heroes[hero];
+    if (!heroStat) {
+      return;
+    }
+    for (let i = LEVEL_PROGRESSION[hero].length - 1; i >= 0; i--) {
+      const progression = LEVEL_PROGRESSION[hero][i];
+      if (heroStat.xp >= progression.xp) {
+        const level = i + 1;
+        if (heroStat.level < level) {
+          heroStat.level = level;
+          heroStat.attack = progression.attack;
+          heroStat.max = heroStat.hp = progression.hp;
 
-            localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
-            this.saveTime(data);
-            didUpdate = true;
-          }
+          localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
+          this.saveTime(data);
+          didUpdate = true;
         }
       }
-    });
+    };
     return didUpdate;
   }
 
@@ -158,8 +171,8 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
     const gameData = data.persist.game ?? (data.persist.game = {});
     const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
-    stats.heroes.forEach(heroStat => {
-      const nextProgression = LEVEL_PROGRESSION[heroStat.level];
+    stats.heroes.forEach((heroStat, hero) => {
+      const nextProgression = LEVEL_PROGRESSION[hero][heroStat.level];
       const xpNext = (nextProgression?.xp ?? 10000000) - heroStat.xp;
       if (xpNext != heroStat.xpNext) {
         heroStat.xpNext = xpNext;
@@ -167,6 +180,13 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         this.saveTime(data);
       }
     });
+  }
+
+  startTime(data: T) {
+    if (!data.persist) {
+      return;
+    }
+    this.saveTime(data);
   }
 
   saveStats(data: T, hp: number, max: number, hero: number) {
@@ -177,6 +197,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     const stats = gameData.stats ?? (gameData.stats = { gold: 0, heroes: [] });
     const heroStat = this.getHeroStat(data, hero);
     heroStat.max = max;
+
     heroStat.hp = Math.max(0, Math.min(hp, max));
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
     this.saveTime(data);
@@ -263,6 +284,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
 
   updateSecret(data: T) {
     data.secret = data.persist?.game?.secret ?? {};
+    data.mainHeroStats = data.persist?.game?.stats?.heroes?.[0];
   }
 
   removeItem(data: T, item: string) {
@@ -286,6 +308,9 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
     const sceneData = data.persist.game ?? (data.persist.game = {});
     sceneData.saveTime = new Date().getTime();
+    if (!sceneData.startTime) {
+      sceneData.startTime = new Date().getTime();
+    }
     localStorage.setItem(`persist_game`, JSON.stringify(data.persist));
   }
 
@@ -319,6 +344,15 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     return RenderingStatus.RENDERING;
   }
 
+  checkMessagesDone(data: T) {
+    if (!data.message && data.messages?.length) {
+      const action = data.messages.shift();
+      data.scroll = 0;
+      this.performAction(data, action, { rand: Math.random() });
+    }
+
+  }
+
   startLoop(data: T): void {
     const loop = (timestamp: DOMHighResTimeStamp): void => {
       this.requestID = requestAnimationFrame(loop);
@@ -326,12 +360,16 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         data.startTime = timestamp;
         this.performStart(data);
       }
+
+      this.checkMessagesDone(data);
+
       const status = this.performRendering(data, timestamp);
       if (!data.completed && status === RenderingStatus.COMPLETED) {
         data.completed = true;
       }
       if (data.dialog) {
         this.dialogRenderer.render(data, timestamp);
+        this.checkMessagesDone(data);
       }
 
       this.applyFade(data, timestamp);
@@ -341,6 +379,13 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       if (data.justPickedUp && !data.message) {
         data.justPickedUp = false;
         this.playSFX(data.sounds?.pickup);
+      }
+
+      if (data.medalStart) {
+        if (data.medalStart === 1) {
+          data.medalStart = timestamp;
+        }
+        this.drawAnimation(data.newgrounds?.animation, timestamp, data.medalStart, false, 64 - 23, 64 - 20);
       }
 
       if (status === RenderingStatus.COMPLETED) {
@@ -358,7 +403,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
   applyItemUpdate(data: T): void {
     if (data.itemBonus) {
       data.itemBonus?.forEach(item => {
-        this.addItem(data, item);
+        this.pickItem(data, item, "");
       });
       delete data.itemBonus;
     }
@@ -371,16 +416,14 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
   }
 
   startFade(data: T, timestamp: DOMHighResTimeStamp) {
-    data.stepProgress = {
-      fadeStart: timestamp,
-    };
+    data.fadeStart = timestamp;
   }
 
   applyFade(data: T, timestamp: DOMHighResTimeStamp, fadeSeconds?: number) {
-    if (!data.stepProgress?.fadeStart) {
+    if (!data.fadeStart) {
       return;
     }
-    const fade = Math.min(1, (timestamp - data.stepProgress.fadeStart) / (fadeSeconds ?? .5) / 1000);
+    const fade = Math.min(1, (timestamp - data.fadeStart) / (fadeSeconds ?? .5) / 1000);
     if (fade && this.context) {
       this.context.fillStyle = `rgb(0, 0, 0, ${fade ?? 0})`;
       this.context.fillRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -406,12 +449,11 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           }
           break;
         case "fade":
-          if (!data.stepProgress) {
+          if (!data.fadeStart) {
             this.startFade(data, timestamp);
           }
-          const fade = Math.min(1, (timestamp - data.stepProgress.fadeStart) / 1000);
+          const fade = Math.min(1, (timestamp - (data.fadeStart ?? 0)) / 1000);
           if (fade >= 1) {
-            delete data.stepProgress;
             data.step++;
           }
           break;
@@ -511,7 +553,7 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     }
   }
 
-  saveReturnData(data: T): ReturnData {
+  saveReturnData(data: T): ReturnData | undefined {
     return { scene: data.title };
   }
 
@@ -527,6 +569,19 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       const returnData = this.saveReturnData(data);
       this.saveGameProp(data, "returnData", returnData);
     }, 1000);
+  }
+
+  getHeroName(hero: number) {
+    switch (hero ?? 0) {
+      case 0:
+        return "Blu";
+      case 1:
+        return "Rob";
+      case 2:
+        return "Ara";
+      case 3:
+        return "Stu";
+    }
   }
 
   performAction(data: T, action?: Action, chance?: { rand: number }): boolean {
@@ -548,18 +603,22 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       return false;
     }
     if (chance && action.chance) {
+      const actionChance = action.chance * (data.inventory?.some(item => item === action.chanceReduced) ? .5 : 1);
       if (!chance.rand) {
         return false;
-      } else if (chance.rand <= action.chance) {
+      } else if (chance.rand <= actionChance) {
         chance.rand = 0;
       } else {
-        chance.rand -= action.chance;
+        chance.rand -= actionChance;
         return false;
       }
     }
 
     if (action?.message) {
       data.message = action.message;
+    }
+    if (action?.messages) {
+      data.messages = (data.messages ?? []).concat(action.messages);
     }
     if (action?.itemBonus) {
       data.itemBonus = action?.itemBonus;
@@ -576,6 +635,15 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     action.secrets?.forEach(secret => {
       this.addSecret(data, secret);
     });
+    if (action.medal && data.newgrounds) {
+      this.getAchievement().unlock({ credentials: data.newgrounds.credentials, medalName: action.medal })
+        .then(({ justUnlocked }) => {
+          if (justUnlocked) {
+            data.medalStart = 1;
+            this.playSFX(data.newgrounds?.sound);
+          }
+        });
+    }
 
     switch (action?.action) {
       case "clearCache":
@@ -589,7 +657,10 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       case "showStats": {
         const stats = data.persist?.game.stats;
         if (stats) {
-          data.message = `HP: ${stats.heroes[0].hp}/${stats.heroes[0].max}. ATK: ${this.getAttack(data, action.hero ?? 0)}. DEF: ${Math.floor(1 + (1 - this.getDefense(data, action.hero ?? 0)) * 10)}. XP: ${stats.heroes[0].xp}. LEVEL: ${stats.heroes[0].level}`;
+          data.messages = stats.heroes.map(({ active }, index) => ({ active, index }))
+            .map(({ index }) => this.getHeroName(index) +
+              `: HP: ${stats.heroes[index].hp}/${stats.heroes[index].max}. ATK: ${this.getAttack(data, index)}. DEF: ${Math.floor(1 + (1 - this.getDefense(data, index)) * 10)}. XP: ${stats.heroes[index].xp}. LEVEL: ${stats.heroes[index].level}`)
+            .map(message => ({ message }));
         }
         break;
       }
@@ -605,8 +676,8 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         break;
       }
       case "saveStats":
-        this.initializeHero(data);
-        this.updateStatsWithLevelProgression(data);
+        this.initializeHero(data, action.hero ?? 0);
+        this.updateStatsWithLevelProgression(data, action.hero ?? 0);
         this.updateLevelProgression(data);
         break;
       case "addGold":
@@ -639,16 +710,49 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
         }
         break;
       case "healFully":
-        this.saveStats(data, data.persist?.game.stats?.heroes[action.hero ?? 0].max ?? 100, data.persist?.game.stats?.heroes[action.hero ?? 0].max ?? 100, action.hero ?? 0);
+        this.saveStats(data, data.persist?.game.stats?.heroes[action.hero ?? data.hero ?? 0].max ?? 100, data.persist?.game.stats?.heroes[action.hero ?? data.hero ?? 0].max ?? 100, action.hero ?? data.hero ?? 0);
         this.playSFX(data.sounds?.heal);
         break;
       case "heal":
-        this.saveStats(data, (data?.persist?.game?.stats?.heroes[action.hero ?? 0].hp ?? 0) + (action.amount ?? 0), (data?.persist?.game?.stats?.heroes[action.hero ?? 0].max ?? 100), action.hero ?? 0);
+        this.saveStats(data, (data?.persist?.game?.stats?.heroes[action.hero ?? data.hero ?? 0].hp ?? 0) + (action.amount ?? 0), (data?.persist?.game?.stats?.heroes[action.hero ?? data.hero ?? 0].max ?? 100), action.hero ?? data.hero ?? 0);
         this.playSFX(data.sounds?.heal);
         break;
       case "addHero":
-        this.getHeroStat(data, action.hero ?? 0);
+        this.initializeHero(data, action.hero ?? 0);
+        this.updateStatsWithLevelProgression(data, action.hero ?? 0);
+        this.updateLevelProgression(data);
         break;
+      case "activateHero": {
+        const heroStat = data.persist?.game.stats?.heroes[action.hero ?? 0];
+        if (heroStat) {
+          heroStat.active = true;
+        }
+        break;
+      }
+      case "deactivateHero": {
+        const heroStat = data.persist?.game.stats?.heroes[action.hero ?? 0];
+        if (heroStat) {
+          heroStat.active = false;
+        }
+        break;
+      }
+      case "hideLoading": {
+        const loadingText = document.getElementById("loadingText");
+        if (loadingText) {
+          loadingText.style.display = "none";
+        }
+        break;
+      }
+      case "startTime": {
+        this.startTime(data);
+        break;
+      }
+      case "postTime": {
+        if (data.persist?.game.startTime && data.newgrounds?.credentials) {
+          this.getAchievement().postScore({ credentials: data.newgrounds.credentials, value: new Date().getTime() - data.persist?.game.startTime });
+        }
+        break;
+      }
     }
     return true;
   }
@@ -687,12 +791,16 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
     } else {
       const [, gold] = item.match(/(\d+)\sgold/) ?? [];
       if (gold) {
-        data.message = messageOverride ?? `You found ${item}`;
+        if (messageOverride !== "") {
+          data.message = messageOverride ?? `You found ${item}`;
+        }
         this.addGold(data, parseInt(gold));
         data.justPickedUp = true;
       } else {
         this.addItem(data, item);
-        data.message = messageOverride ?? `You found a ${item}`;
+        if (messageOverride !== "") {
+          data.message = messageOverride ?? `You found a ${item}`;
+        }
         data.justPickedUp = true;
       }
     }
@@ -725,9 +833,15 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
       const timeEllapsed = timestamp - (data.startTime ?? 0);
       for (let slide of slides) {
         if (Condition.eval(slide.hidden, { scene: data })) {
+          slide.currentlyHidden = true;
           continue;
         }
-        const rateEllapsed = Math.min(slide?.duration ? timeEllapsed / (slide.duration * 1000) : 1, 1);
+        if (slide.currentlyHidden) {
+          slide.currentlyHidden = false;
+          slide.timeAnim = timestamp;
+        }
+        const animEllapsed = slide.timeAnim ? timestamp - slide.timeAnim : timeEllapsed;
+        const rateEllapsed = Math.min(slide?.duration ? animEllapsed / (slide.duration * 1000) : 1, 1);
         const x = (slide.to.x * rateEllapsed + slide.from.x * (1 - rateEllapsed));
         const y = (slide.to.y * rateEllapsed + slide.from.y * (1 - rateEllapsed));
         minRateEllapsed = Math.min(rateEllapsed, minRateEllapsed);
@@ -741,8 +855,8 @@ export default class CanvasRenderer<T extends CanvasScene> implements Renderer<T
           }
           const animation = slide?.animation;
           if (animation?.asset?.image) {
-            const frame = timeEllapsed && animation?.frameRate ? Math.floor(animation.frameRate * timeEllapsed / 1000) : 0;
-            const [sx, sy, width, height] = animation?.getCrop(frame) ?? DEFAULT_CROP;
+            const frame = animEllapsed && animation?.frameRate ? Math.floor(animation.frameRate * animEllapsed / 1000) : 0;
+            const [sx, sy, width, height] = animation?.getCrop(frame, slide.looping) ?? DEFAULT_CROP;
             this.context.drawImage(
               animation?.asset?.image,
               sx, sy, width, height,

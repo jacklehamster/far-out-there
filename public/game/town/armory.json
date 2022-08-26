@@ -8,8 +8,8 @@
   "numOptions": 3,
   "dialog": { "type": "ref", "path": "armory-dialog.json" },
   "actions": [
-    { "action": "buy", "item": "shield", "cost": 500 },
-    { "action": "buy", "item": "armor", "cost": 1000 },
+    { "action": "buy", "item": "shield", "cost": 250 },
+    { "action": "buy", "item": "armor", "cost": 800 },
     { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
   ],
   "onEnd": [

@@ -1,0 +1,25 @@
+{
+  "credentials": {
+      "game": "Far out",
+      "url": "https://www.newgrounds.com/portal/view/1932731",
+      "key": "55118:Wh3EiKQ0",
+      "secret": "HX/0WC1AsaiRFEpPEOffQA=="
+  },
+  "animation": {
+    "type": "animation",
+    "asset": {
+      "type": "image",
+      "path": "newgrounds.png"
+    },
+    "sprite": {
+      "width": 23,
+      "height": 22
+    },
+    "frameRate": 10,
+    "range": [0, 19]
+  },
+  "sound": {
+    "type": "music",
+    "path": "sound.mp3"
+  }
+}

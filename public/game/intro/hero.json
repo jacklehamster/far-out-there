@@ -4,7 +4,8 @@
 
   "onStart": [
     {
-      "action": "saveStats"
+      "action": "saveStats",
+      "hero": 0
     }
   ],
 

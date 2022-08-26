@@ -39,5 +39,5 @@ export default class BattleScene extends CanvasScene {
   xp?: number;
   gold?: number;
   collected?: boolean;
-  hero?: number;
+  heroName?: string;
 }

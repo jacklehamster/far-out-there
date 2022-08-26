@@ -10,7 +10,7 @@
       ]
     },
     {
-      "message": "What is this? Another love letter from that old fool! Geez, if you needed a fake passport, all you needed is to ask. I'll get one ready for ya.",
+      "message": "What is this? Another love letter from that old fool! Geez, if you needed a fake passport, all you had to do is ask. I'll get one ready for ya.",
       "itemsRequired": [
         "letter"
       ],
@@ -88,5 +88,11 @@
   "music": {
     "type": "music",
     "path": "../music/outside.mp3"
+  },
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
   }
 }

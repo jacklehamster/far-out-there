@@ -1,0 +1,91 @@
+{
+  "title": "spaceship-switch",
+  "type": "slideScene",
+  "gridWidth": 10,
+  "gridHeight": 10,
+
+  "onStart": [
+    {
+      "description": "FULL PARTY",
+      "action": "goto",
+      "destination": {
+        "scene": "space-out-2"
+      },
+      "secretRequired": [
+        "stuAlive"
+      ]
+    },
+    {
+      "description": "STU IS STILL ON WHEELS",
+      "action": "goto",
+      "destination": {
+        "scene": "ara-airport"
+      },
+      "secretForbidden": [
+        "stuAlive"
+      ],
+      "secretRequired": [
+        "araJoined"
+      ]
+    },
+    {
+      "description": "ARA DID NOT JOIN THE PARTY",
+      "action": "goto",
+      "destination": {
+        "scene": "space-out"
+      },
+      "secretForbidden": [
+        "araJoined"
+      ]
+    },
+    {
+      "description": "ARA IS STILL IN THE CHURCH",
+      "action": "goto",
+      "destination": {
+        "scene": "space-out"
+      },
+      "secretForbidden": [
+        "stuAlive"
+      ],
+      "secretRequired": [
+        "araChurch"
+      ]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "../maze/dark.png"
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],  
+
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["goto"]
+  ],
+
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

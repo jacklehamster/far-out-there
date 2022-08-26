@@ -140,5 +140,29 @@
     },
     "\\|": { "images":[{ "type": "ref", "path": "../town/tile.json", "params": { "{frame}": 3 } }],
       "portal": "ara-indoor"
+    },
+    "RR": { "images":[
+        { "type": "ref", "path": "outside-tile.json", "params": { "{frame}": 3 } },
+        {
+          "type": "animation",
+          "hidden": {
+            "type": "condition",
+            "formula": "scene.secret.drilled != undefined"
+          },
+          "asset": {
+            "type": "image",
+            "path": "../town/tiles.png"
+          },
+          "sprite": {
+            "width": 10,
+            "height": 10
+          },
+          "range": [24, 24]
+        }
+      ],
+      "portal": "rock", "portalDisabled": {
+        "type": "condition",
+        "formula": "scene.secret.drilled != undefined"
+      }
     }
   }

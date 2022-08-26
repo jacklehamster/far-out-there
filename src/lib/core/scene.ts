@@ -1,4 +1,6 @@
+import { NewgroundsCredentials } from "../renderer/achievements/achievement";
 import Action from "../renderer/types/action";
+import Animation from "../renderer/types/animation";
 import Music from "../renderer/types/music";
 import { ReturnData } from "../renderer/types/return-data";
 import { Position } from "../scenes/canvas-scene";

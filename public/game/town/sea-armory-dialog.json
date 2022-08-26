@@ -69,6 +69,20 @@
         }
       },
       {
+        "text": "{persist.game.stats.gold}G",
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.message != undefined or scene.completed"
+        },
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined and not scene.completed"
+        },
+        "noScroll": true,
+        "x": 50,
+        "y": 50
+      },
+      {
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true

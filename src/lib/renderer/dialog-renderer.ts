@@ -24,13 +24,17 @@ export class DialogRenderer {
     return scroll;
   }
 
-  isCompleted(scene: CanvasScene): boolean {
+  isMessageCompleted(scene: CanvasScene): boolean {
     if (!scene.dialog?.labels || !scene.dialog?.fontSheet) {
       return true;
     }
     const lastLabel = scene.dialog?.labels[scene.dialog.labels.length - 1];
 
-    if (!lastLabel.text && !scene.message) {
+    if (!lastLabel.text && !scene.message && !scene.messages?.length) {
+      return true;
+    }
+
+    if (lastLabel.nonBlocking) {
       return true;
     }
 
@@ -43,6 +47,10 @@ export class DialogRenderer {
     });
 
     return !scene.scrollStart && (scene.scroll ?? 0) > shift;
+  }
+
+  isCompleted(scene: CanvasScene): boolean {
+    return this.isMessageCompleted(scene) && !scene.messages?.length;
   }
 
   addListener(scene: CanvasScene) {
@@ -110,7 +118,7 @@ export class DialogRenderer {
             }
           });
         }
-        if (menu.message && this.isCompleted(menu)) {
+        if (menu.message && this.isMessageCompleted(menu)) {
           menu.message = undefined;
           menu.scroll = 0;
         }

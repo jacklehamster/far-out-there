@@ -1,0 +1,52 @@
+{
+  "type": "slideScene",
+  "title": "game-over-2",
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "../intro/space.png"
+    },
+    "from": {
+      "x": 0,
+      "y": -16
+    },
+    "to": {
+      "x": 0,
+      "y": -16
+    },
+    "duration": 3
+  }],
+  "music": {
+    "type": "music",
+    "path": "../music/outside.mp3"
+  },
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      { "text": "Congratulations!", "x": 1, "y": 1, "nonBlocking": true
+      },
+      { "text": "You left on", "x": 1, "y": 11, "nonBlocking": true
+      },
+      { "text": "a spaceship", "x": 1, "y": 21, "nonBlocking": true
+      },
+      { "text": "with your", "x": 1, "y": 31, "nonBlocking": true
+      },
+      { "text": "full party!", "x": 1, "y": 41, "nonBlocking": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["wait", 10],
+    ["fade", 2],
+    ["wait", 3],
+    ["next"]
+  ],
+  "newgrounds": {
+    "type": "ref", "path": "../newgrounds/newgrounds.json"
+  },
+  "onStart": [
+    { "action": "postTime", "medal": "Full party" }
+  ]
+}

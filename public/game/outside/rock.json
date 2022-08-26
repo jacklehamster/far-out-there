@@ -1,0 +1,164 @@
+{
+  "type": "slideScene",
+  "title": "rock",
+
+  "onStart": [
+    {
+      "secretForbidden": ["robotActive"],
+      "message": "(there's a big rock blocking the way.)"
+    },
+    {
+      "secretRequired": ["robotActive"],
+      "messages": [
+        { "message": "(there's a big rock blocking the way.)" },
+        { "message": "Hello master. I have a drill that can break through this rock. Would you like me to do this?", "secrets": ["robotDrill"] },
+        { "message": "(sure... I guess there's no harm in trying.)" },
+        { "message": "...", "secrets": [ "drilling" ] },
+        { "message": "It is done.", "secrets": [ "drilled" ] },
+        { "message": "(nice job! We can go through now)"}
+      ]
+    }
+  ],
+
+  "slides": [{
+    "type": "slide",
+    "asset": {
+      "type": "image",
+      "path": "landscape.png"
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.drilled != undefined"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [34, 34]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.drilled == undefined"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 10,
+      "range": [35, 37]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.robotDrill == undefined or (scene.secret.drilling != undefined and scene.secret.drilled == undefined)"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [38, 38]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.drilling == undefined or scene.secret.drilled != undefined"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 10,
+      "range": [39, 40]
+    },
+    "looping": true,
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }],
+  "dialog": {
+    "type": "dialog",
+    "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
+    "labels": [
+      {
+        "x": 1, "y": 49,
+        "width": 62, "height": 20,
+        "box": true
+      }
+    ]
+  },
+  "onEnd": [
+    ["fade", 0.5],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/town.mp3"
+  }
+}

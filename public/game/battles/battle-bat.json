@@ -3,7 +3,7 @@
   "type": "battleScene",
 
   "xp": 100,
-  "gold": 10,
+  "gold": 20,
 
   "foeMaxLife": 40,
   "foeStrength": 8,

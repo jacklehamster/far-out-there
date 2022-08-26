@@ -2,7 +2,7 @@
     "type": "dialog",
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
-      { "text": "shield (500G)", "x": 7, "y": 0,
+      { "text": "shield (250G)", "x": 7, "y": 0,
         "outline": {
           "type": "condition",
           "formula": "scene.message == undefined and not scene.completed"
@@ -13,7 +13,7 @@
           "formula": "scene.message != undefined or scene.completed"
         }
       },
-      { "text": "armor (1000G)", "x": 7, "y": 8,
+      { "text": "armor (800G)", "x": 7, "y": 8,
         "outline": {
           "type": "condition",
           "formula": "scene.message == undefined and not scene.completed"
@@ -67,6 +67,20 @@
           "type": "condition",
           "formula": "scene.message == undefined and not scene.completed"
         }
+      },
+      {
+        "text": "{persist.game.stats.gold}G",
+        "hidden": {
+          "type": "condition",
+          "formula": "scene.message != undefined or scene.completed"
+        },
+        "outline": {
+          "type": "condition",
+          "formula": "scene.message == undefined and not scene.completed"
+        },
+        "noScroll": true,
+        "x": 50,
+        "y": 50
       },
       {
         "x": 1, "y": 49,

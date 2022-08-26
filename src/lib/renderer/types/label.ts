@@ -12,4 +12,5 @@ export interface Label {
   outline?: boolean;
   fixed?: boolean;
   noScroll?: boolean;
+  nonBlocking?: boolean;
 }

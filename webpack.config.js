@@ -12,6 +12,11 @@ export default {
   resolve: {
     extensions: [".js", ".jsx", ".json", ".ts", ".tsx", ".css", ".scss", ".png"],
   },
+  performance: {
+    hints: false,
+    maxEntrypointSize: 512000,
+    maxAssetSize: 512000
+  },
   module: {
     rules: [
       {

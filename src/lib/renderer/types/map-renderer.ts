@@ -75,6 +75,16 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
     };
   }
 
+  getLeaderIndex(data: MapScene) {
+    const heroStats = data.persist?.game?.stats?.heroes;
+    for (let i = 0; i < data.heroes.length; i++) {
+      if (!Condition.eval(data.heroes[i].hidden, { scene: data }) && heroStats?.[data.heroes[i].id].hp) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
   performRendering(data: MapScene, timestamp: DOMHighResTimeStamp): RenderingStatus {
     if (this.context) {
       this.context?.clearRect(0, 0, this.context.canvas.width, this.context.canvas.height);
@@ -94,14 +104,16 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
         }
       }
     });
-    const mainHero = data.heroes[0];
+    const leaderIndex = this.getLeaderIndex(data);
+    let mainHero = data.heroes[leaderIndex];
+    //    data.persist?.game.inventory
     if (!data.moveAction) {
       data.moveAction = { x: 0, y: 0 };
     }
 
     if (!mainHero.isMoving(timestamp)) {
       const underTile = mainHero.getTileUnderneath(data);
-      if (underTile?.portal) {
+      if (underTile?.portal && !Condition.eval(underTile.portalDisabled, { scene: data })) {
         data.destination = underTile.portal;
         data.destinationPosition = underTile.portalPosition;
         data.destinationDirection = underTile.portalDirection;
@@ -125,7 +137,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
               const nextHero = data.heroes[i];
               if (nextHero) {
                 const heroStat = data.persist?.game.stats?.heroes[nextHero.id];
-                if (!heroStat?.active || Condition.eval(nextHero.hidden, { scene: data })) {
+                if (Condition.eval(nextHero.hidden, { scene: data }) || !heroStat?.hp) {
                   continue;
                 }
                 nextHero.moveTo(leadingHero.fromPosition.x, leadingHero.fromPosition.y, timestamp);
@@ -150,6 +162,9 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
         const cell = data.grid?.[gy]?.[gx] ?? '';
         const tile = data.tiles[cell] ?? data.defaultTile;
         tile?.images?.forEach(animation => {
+          if (Condition.eval(animation.hidden, { scene: data })) {
+            return;
+          }
           if (this.context && animation?.asset) {
             const timeEllapsed = timestamp - (data.startTime ?? 0);
             const frame = timeEllapsed && animation?.frameRate ? Math.floor(animation.frameRate * timeEllapsed / 1000) : 0;
@@ -166,7 +181,7 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
     }
 
     const sortedHeroes = [...data.heroes]
-      .filter(({ id }) => data.persist?.game.stats?.heroes[id ?? 0]?.active)
+      .filter(({ id }) => data.persist?.game.stats?.heroes[id ?? 0]?.hp)
       .filter(({ hidden }) => !Condition.eval(hidden, { scene: data }))
       .sort((hero1: Hero, hero2: Hero) => {
         const pos1 = hero1.getPosition(timestamp);
@@ -177,15 +192,16 @@ export default class MapRenderer extends KeyboardRenderer<MapScene> {
         return (pos1?.y ?? 0) < (pos2?.y ?? 0) ? -1 : 1;
       });
     sortedHeroes.forEach(hero => {
-      if (this.context && hero.animation?.asset?.image) {
-        const [x, y, width, height] = hero.animation.getCrop(
-          hero.isMoving(timestamp) ? hero.animation.getFrame(timestamp, hero.moveTime) % hero.animation.getTotalFrames() : 1);
+      const animation = hero.getAnimation();
+      if (this.context && animation.asset?.image) {
+        const [x, y, width, height] = animation.getCrop(
+          hero.isMoving(timestamp) ? animation.getFrame(timestamp, hero.moveTime) % animation.getTotalFrames() : 1);
         const pos = hero.getPosition(timestamp);
         if (pos) {
           const gx = pos.x + 3.5;
           const gy = pos.y + 4;
           this.context.drawImage(
-            hero.animation?.asset?.image,
+            animation.asset?.image,
             x, y, width, height,
             Math.round((gx - (mainHeroPosition?.x ?? 0)) * gridWidth - 8),
             Math.round((gy - (mainHeroPosition?.y ?? 0)) * gridHeight - 16),

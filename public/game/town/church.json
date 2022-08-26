@@ -1,6 +1,48 @@
 {
   "type": "slideScene",
   "title": "church",
+  "onStart": [
+    { 
+      "secretForbidden": ["araJoined"],
+      "message": "Welcome to the church! Your level is {mainHeroStats.level}. To reach the next level, you need {mainHeroStats.xpNext} experience points."
+    }, {
+      "secretRequired": ["araJoined"],
+      "secretForbidden": ["araChurch"],
+      "messages": [
+        { "message": "Welcome to the churr.... ergh wait," },
+        { "message": "What the hell are you doing? Please leave that big rock outside the church." },
+        { "message": "Hey stop!... you cannot be back there!", "secrets": ["araChurch"], "itemREmove": ["pet rock"] },
+        { "message": "Sorry, we need to use this place for my friend. Please leave me and Stu alone. We need some privacy.", "secrets": ["priestLeft"] }
+      ]
+    }, {
+      "action": "deactiveHero",
+      "hero": 2,
+      "secretForbidden": ["moreTime"],
+      "secretRequired": ["araChurch"],
+      "messages": [
+        { "message": "Please leave the church. I'm still helping my friend Stu recover!", "secrets": ["moreTime"] }
+      ]
+    }, {
+      "secretForbidden": ["moreMoreTime"],
+      "secretRequired": ["moreTime"],
+      "messages": [
+        { "message": "I still need more time alone with my friend Stu, so back off!", "secrets": ["moreMoreTime"] }
+      ]
+    }, {
+      "action": "activateHero",
+      "hero": 2,
+      "secretForbidden": ["stuHealed"],
+      "secretRequired": ["moreMoreTime"],
+      "messages": [
+        { "message": "Ok, we're done. Look at my Stu, so shiny and cute." },
+        { "message": "Oh yes, Stu, you're a good boy!" },
+        { "message": "Finally, I can have it back! Please take your goddamn rock and get the hell out of my church!", "secrets": ["stuHealed"] }
+      ]
+    }, { 
+      "secretRequired": ["stuAlive"],
+      "message": "Welcome to the church! Your level is {mainHeroStats.level}. To reach the next level, you need {mainHeroStats.xpNext} experience points."
+    }
+  ],
   "slides": [{
     "type": "slide",
     "animation": {
@@ -25,6 +67,58 @@
     }
   }, {
     "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.araChurch == undefined or scene.secret.stuHealed != undefined"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [32, 32]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [41, 41]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.priestLeft != undefined and scene.secret.stuHealed == undefined"
+    },
     "animation": {
       "type": "animation",
       "asset": {
@@ -51,7 +145,6 @@
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
       {
-        "text": "Welcome to the church! Your level is {persist.game.stats.level}. To reach the next level, you need {persist.game.stats.xpNext} experience points.",
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true
@@ -59,6 +152,17 @@
     ]
   },
   "onEnd": [
+    ["action", 0, {
+      "action": "addHero",
+      "hero": 3,
+      "secretRequired": ["stuHealed"],
+      "secretForbidden": ["stuAlive"]
+    }],
+    ["action", 0, {
+      "secretRequired": ["stuHealed"],
+      "secretForbidden": ["stuAlive"],
+      "secrets": ["stuAlive"]
+    }],
     ["fade", 0.5],
     ["return"]
   ],

@@ -1,6 +1,14 @@
 {
   "type": "slideScene",
   "title": "space",
+
+  "onStart": [
+    {
+      "action": "startTime"
+    }
+  ],
+
+
   "slides": [{
     "type": "slide",
     "asset": {

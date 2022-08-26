@@ -36,5 +36,11 @@
       { "text": "next adventures.", "x": 1, "y": 41
       }
     ]
-  }
+  },
+  "newgrounds": {
+    "type": "ref", "path": "../newgrounds/newgrounds.json"
+  },
+  "onStart": [
+    { "medal": "Lift off to space" }
+  ]
 }

@@ -1,3 +1,4 @@
+import Condition from "../../core/condition";
 import BlobType from "./blob";
 
 
@@ -13,9 +14,10 @@ export default class Animation {
   range?: [number, number];
   flip?: boolean;
   position?: { x: number; y: number };
+  hidden?: boolean | Condition;
   #tempVar: [number, number, number, number, boolean] = [0, 0, 0, 0, false];
 
-  constructor({ asset, sprite, frameRate, totalFrames, range, flip, position }: { asset?: BlobType; sprite?: { width: number, height: number }; frameRate?: number; totalFrames?: number; range?: [number, number]; flip?: boolean; position?: { x: number; y: number } }) {
+  constructor({ asset, sprite, frameRate, totalFrames, range, flip, position, hidden }: { asset?: BlobType; sprite?: { width: number, height: number }; frameRate?: number; totalFrames?: number; range?: [number, number]; flip?: boolean; position?: { x: number; y: number }; hidden?: boolean | Condition }) {
     this.asset = asset;
     this.sprite.width = sprite?.width ?? 0;
     this.sprite.height = sprite?.height ?? 0;
@@ -24,6 +26,7 @@ export default class Animation {
     this.range = range;
     this.flip = flip;
     this.position = position;
+    this.hidden = hidden;
   }
 
   getLocalFrame(frame: number, totalFrames: number, looping = false): { localFrame: number; animating: boolean } {

@@ -1,0 +1,102 @@
+{
+  "type": "slideScene",
+  "title": "beep-bop",
+  "slides": [{
+    "type": "slide",
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../flash.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "frameRate": 2.33,
+      "range": [0,1]
+    },
+    "looping": true,
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    },
+    "duration": 3
+  },{
+    "type": "slide",
+    "animation": {
+      "type": "ref",
+      "path": "anim.json",
+      "params": { "{range}": [27, 32], "{frameRate}": 6.99 }
+    },
+    "looping": true,
+    "from": {
+      "x": 0,
+      "y": 25
+    },
+    "to": {
+      "x": 0,
+      "y": 25
+    },
+    "duration": 3
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "ref",
+      "path": "anim.json",
+      "params": { "{range}": [4, 7], "{frameRate}": 4.66 }
+    },
+    "looping": true,
+    "from": {
+      "x": 16,
+      "y": 25
+    },
+    "to": {
+      "x": 16,
+      "y": 25
+    },
+    "duration": 3
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "ref",
+      "path": "anim.json",
+      "params": { "{range}": [8, 11], "{frameRate}": 4.66 }
+    },
+    "looping": true,
+    "from": {
+      "x": 32,
+      "y": 25
+    },
+    "to": {
+      "x": 32,
+      "y": 25
+    },
+    "duration": 3
+  }, {
+    "type": "slide",
+    "animation": {
+      "type": "ref",
+      "path": "anim.json",
+      "params": { "{range}": [12, 15], "{frameRate}": 18.64 }
+    },
+    "looping": true,
+    "from": {
+      "x": 48,
+      "y": 25
+    },
+    "to": {
+      "x": 48,
+      "y": 25
+    },
+    "duration": 3
+  }],
+  "music": {
+    "type": "music",
+    "path": "../music/beepbop.mp3"
+  }
+}

@@ -30,11 +30,13 @@
   "onCellActions": [
     {
       "chance": 0.05,
+      "chanceReduced": "charm",
       "action": "goto",
       "destination": { "scene": "battle-bat" }
     },
     {
       "chance": 0.03,
+      "chanceReduced": "charm",
       "action": "goto",
       "destination": { "scene": "battle-lion" }
     }

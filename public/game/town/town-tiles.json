@@ -81,6 +81,12 @@
       ],
       "portal": "npc5"
     },
+    " 8": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 10 } }
+      ],
+      "portal": "npc6"
+    },
     " o": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 11 } }
@@ -155,34 +161,46 @@
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
         { "type": "ref", "path": "spaceship.json", "params": { "{frame}": 0 } }
       ],
-      "portal": "space-out"
+      "block": true
     },
     "\\ ": {
       "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
         { "type": "ref", "path": "spaceship.json", "params": { "{frame}": 1 } }
       ],
-      "portal": "space-out"
+      "block": true
     },
     "/|": {
       "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
         { "type": "ref", "path": "spaceship.json", "params": { "{frame}": 2 } }
       ],
-      "portal": "space-out"
+      "portal": "spaceship-switch", "block": {
+        "type": "condition",
+        "formula": "scene.secret.robotActive == undefined"
+      }
     },
     "|\\": {
       "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
         { "type": "ref", "path": "spaceship.json", "params": { "{frame}": 3 } }
       ],
-      "portal": "space-out"
+      "portal": "spaceship-switch", "block": {
+        "type": "condition",
+        "formula": "scene.secret.robotActive == undefined"
+      }
     },
     " Ô": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 22 } }
       ],
       "portal": "guard-to-tunnel"
+    },
+    " Ö": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 22 } }
+      ],
+      "portal": "guard-to-spaceship"
     },
     " ô": { "images": [
         { "type": "ref", "path": "tile.json", "params": { "{frame}": 6 } },
@@ -207,5 +225,44 @@
         { "type": "ref", "path": "church-tile.json", "params": { "{frame}": 1 } }
       ],
       "block": true
+    },
+    "┼o": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
+        { "type": "animation",
+          "asset": {
+            "type": "image",
+            "path": "tiles.png"
+          },
+          "sprite": {
+            "width": 10,
+            "height": 10
+          },
+          "range": [25, 25],
+          "hidden": { "type": "condition", "formula": "scene.secret.priestLeft == undefined or scene.secret.stuAlive != undefined" } }
+      ],
+      "block": {
+        "type": "condition",
+        "formula": "scene.secret.priestLeft != undefined and scene.secret.stuAlive == undefined"
+      }
+    },
+    "┼O": { "images": [
+        { "type": "ref", "path": "tile.json", "params": { "{frame}": 9 } },
+        { "type": "animation",
+          "asset": {
+            "type": "image",
+            "path": "tiles.png"
+          },
+          "sprite": {
+            "width": 10,
+            "height": 10
+          },
+          "range": [26, 26],
+          "hidden": { "type": "condition", "formula": "scene.secret.priestLeft == undefined or scene.secret.stuAlive != undefined" } }
+      ],
+      "portal": "priest",
+      "portalDisabled": {
+        "type": "condition",
+        "formula": "scene.secret.priestLeft == undefined or scene.secret.stuAlive != undefined"
+      }
     }
   }

@@ -8,7 +8,10 @@
       "secretForbidden": ["knowrobot"]
     },
     {
-      "message": "You found a robot? Oh wow, I'd love to work on that. Yes! Bring it to me, I'll fix it up in no time. You can take this wheelcart with you.",
+      "messages": [
+        { "message": "You found a robot? Oh wow, I'd love to work on that. Yes! Bring it to me, I'll fix it up in no time. " },
+        { "message": "Take this wheelcart with you. It will help you carry it." }
+      ],
       "secretForbidden": ["robot"],
       "secretRequired": ["knowrobot"],
       "itemsForbidden": ["wheelcart"]
@@ -31,12 +34,27 @@
     },
     {
       "message": "The robot should be ready and operational.",
-      "secretRequired": ["robotRepair2"]
+      "secretRequired": ["robotRepair2"],
+      "secretForbidden": ["robotActive"]
     },
     {
       "message": "How's the robot doing?",
       "secretRequired": ["robotActive"],
-      "itemsForbidden": ["wheelcart"]
+      "itemsForbidden": ["wheelcart"],
+      "secretForbidden": ["stu"]
+    },
+    {
+      "secretRequired": ["stu"],
+      "itemsForbidden": ["wheelcart"],
+      "messages": [
+        { "message": "You need to borrow my wheelcart for carrying... a big rock?!" },
+        { "message": "Hum... ok fine. I guess you can have it. I'm feeling generous." }
+      ]
+    },
+    {
+      "secretRequired": ["stu"],
+      "itemsRequired": ["wheelcart"],
+      "message": "Don't worry about it, you can keep the wheelcart."
     }
   ],
 
@@ -104,6 +122,8 @@
       "itemBonus": ["wheelcart"]
     }],
     ["action", 0, {
+      "action": "activateHero",
+      "hero": 1,
       "secretRequired": ["robotRepair2"],
       "secretForbidden": ["robotActive"],
       "secrets": ["robotActive"],
@@ -120,11 +140,22 @@
       "secretForbidden": ["robotRepair"],
       "secrets": ["robotRepair"]
     }],
+    ["action", 0, {
+      "secretRequired": ["stu"],
+      "itemsForbidden": ["wheelcart"],
+      "itemBonus": ["wheelcart"]
+    }],
     ["fade", 0.5],
     ["return"]
   ],
   "music": {
     "type": "music",
     "path": "../music/town.mp3"
+  },
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
   }
 }

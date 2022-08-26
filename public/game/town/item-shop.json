@@ -1,0 +1,35 @@
+{
+  "type": "menuScene",
+  "title": "item-shop",
+  "onStart": [{
+      "messages": [
+        { "message":"Welcome! This is the handy shop!" },
+        { "message":"We sell cloaks, to make your escapes easier." },
+        { "message":"We also have charms, which reduces your chance of encountering monsters." }
+      ]
+  }],
+  "slides": { "type": "ref", "path": "shop-slides.json" },
+  "numOptions": 3,
+  "dialog": { "type": "ref", "path": "item-dialog.json" },
+  "actions": [
+    { "action": "buy", "item": "cloak", "cost": 100 },
+    { "action": "buy", "item": "charm", "cost": 200 },
+    { "action": "lastDialog", "message": "Good bye, hope to see you again!" }
+  ],
+  "onEnd": [
+    ["hideDialogs"],
+    ["fade", 0.2],
+    ["return"]
+  ],
+  "music": {
+    "type": "music",
+    "path": "../music/shop.mp3"
+  },
+
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
+  }
+}

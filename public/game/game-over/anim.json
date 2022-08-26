@@ -1,0 +1,13 @@
+{
+  "type": "animation",
+  "asset": {
+    "type": "image",
+    "path": "../far-out-16.png"
+  },
+  "sprite": {
+    "width": 16,
+    "height": 16
+  },
+  "frameRate": "{frameRate}",
+  "range": "{range}"
+}

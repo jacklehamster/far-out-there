@@ -88,5 +88,11 @@
   "music": {
     "type": "music",
     "path": "../music/town.mp3"
+  },
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
   }
 }

@@ -4,7 +4,33 @@
 
   "onStart": [
     {
-      "message": "Oh hi!"
+      "secretForbidden": ["stu"],
+      "messages": [
+        { "message": "Hi, my name is Ara... I got lost within these mountains, so I settled in this valley. You're the first person I have seen for years!" },
+        { "message": "You want me to go on an adventure with you? Oh, I would love to. But..." },
+        { "message": "I cannot leave my friend Stu alone... No! We must take Stu along, I will not abandon him...", "secrets": ["stu"] },
+        { "message": "Stu needs some help, he cannot move because he is sick, and is too heavy for me to carry. Please help me bring Stu to the nearest church, where he can heal." },
+        { "message": "(this looks like a big rock. how are we going to carry it?... and most importantly... why?!)" }
+      ]
+    },
+    {
+      "secretRequired": ["stu"],
+      "itemsForbidden": ["wheelcart"],
+      "message": "Have you found a way to carry Stu? Please help me bring him to the nearest church."
+    },
+    {
+      "secretRequired": ["ara"],
+      "message": "(this is Ara's home.)"
+    },
+    {
+      "secretRequired": ["stu"],
+      "itemsRequired": ["wheelcart"],
+      "secretForbidden": ["ara"],
+      "messages": [
+        { "message": "You came back! Oh... I was worried you'd never return." },
+        { "message": "You also have something to carry Stu? Wonderful! Let's take Stu to a church so he can heal." },
+        { "message": "(great! Ara and her pet rock have joined your party)", "secrets": [ "ara" ] }
+      ]
     }
   ],
 
@@ -32,6 +58,10 @@
     }
   }, {
     "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.stu == undefined or scene.secret.ara != undefined"
+    },
     "animation": {
       "type": "animation",
       "asset": {
@@ -42,7 +72,33 @@
         "width": 64,
         "height": 64
       },
-      "range": [10, 10]
+      "range": [32, 32]
+    },
+    "from": {
+      "x": 0,
+      "y": 0
+    },
+    "to": {
+      "x": 0,
+      "y": 0
+    }
+  }, {
+    "type": "slide",
+    "hidden": {
+      "type": "condition",
+      "formula": "scene.secret.stu != undefined"
+    },
+    "animation": {
+      "type": "animation",
+      "asset": {
+        "type": "image",
+        "path": "../town/npc-sheet.png"
+      },
+      "sprite": {
+        "width": 64,
+        "height": 64
+      },
+      "range": [33, 33]
     },
     "from": {
       "x": 0,
@@ -65,11 +121,29 @@
     ]
   },
   "onEnd": [
+    ["action", 0, {
+      "action": "addHero",
+      "hero": 2,
+      "secretRequired": ["ara"],
+      "secretForbidden": ["araJoined"]
+    }],
+    ["action", 0, {
+      "secretRequired": ["ara"],
+      "secretForbidden": ["araJoined"],
+      "secrets": ["araJoined"],
+      "itemBonus": ["pet rock"]
+    }],
     ["fade", 0.5],
     ["return"]
   ],
   "music": {
     "type": "music",
     "path": "../music/outside.mp3"
+  },
+  "sounds": {
+    "pickup": {
+      "type": "music",
+      "path": "../sounds/pickup.mp3"
+    }
   }
 }

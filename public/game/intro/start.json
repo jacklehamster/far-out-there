@@ -19,8 +19,14 @@
       }
     ]
   },
+  "onStart": [
+    { "action": "hideLoading" }
+  ],
   "onEnd": [
     ["hideLoading"],
     ["next"]
-  ]
+  ],
+  "newgrounds": {
+    "type": "ref", "path": "../newgrounds/newgrounds.json"
+  }
 }

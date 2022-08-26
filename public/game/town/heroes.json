@@ -13,8 +13,11 @@
           "height": 16
         },
         "frameRate": 16,
-        "range": [0, 3]
-      }
+        "range": [27, 32]
+      },
+      "animationLeft": { "type": "ref", "path": "hero-anim.json", "params": { "{frameRate}": 16 ,"{range}": [39, 44] } },
+      "animationRight": { "type": "ref", "path": "hero-anim.json", "params": { "{frameRate}": 16, "{range}": [33, 38] } },
+      "animationUp": { "type": "ref", "path": "hero-anim.json", "params": { "{frameRate}": 16, "{range}": [45, 50]}}
     },
     {
       "type": "hero",
@@ -42,7 +45,7 @@
       "id": 1,
       "hidden": {
         "type": "condition",
-        "formula": "scene.secret.activeRobot != undefined or scene.secret.robotRepair != undefined"
+        "formula": "scene.secret.robotActive != undefined or scene.secret.robotRepair != undefined"
       },
       "animation": {
         "type": "animation",
@@ -61,6 +64,10 @@
     {
       "type": "hero",
       "id": 2,
+      "hidden": {
+        "type": "condition",
+        "formula": "scene.secret.araChurch != undefined and scene.secret.stuAlive == undefined"
+      },
       "animation": {
         "type": "animation",
         "asset": {
@@ -73,6 +80,27 @@
         },
         "frameRate": 16,
         "range": [8, 11]
+      }
+    },
+    {
+      "type": "hero",
+      "id": 2,
+      "hidden": {
+        "type": "condition",
+        "formula": "scene.secret.stuAlive != undefined or scene.secret.araChurch != undefined"
+      },
+      "animation": {
+        "type": "animation",
+        "asset": {
+          "type": "image",
+          "path": "../far-out-16.png"
+        },
+        "sprite": {
+          "width": 16,
+          "height": 16
+        },
+        "frameRate": 16,
+        "range": [23, 26]
       }
     },
     {

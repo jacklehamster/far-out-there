@@ -15,7 +15,7 @@
     { "action": "buy", "item": "soda", "cost": 40 },
     { "action": "buy", "item": "taco", "cost": 100 },
     { "actions": [
-        { "action": "buy", "message": "Good fish you got there! Ok I'll make you a nice fishtaco, free of charge.",
+        { "action": "buy", "message": "Good fish you caught there! Ok I'll make you a nice fishtaco, free of charge.",
           "item": "fishtaco", "cost": 0, "secretRequired": ["fishtaco"], "itemsRequired": ["fish"], "itemRemove": ["fish"] },
         { "action": "noop", "message": "We ran out of fish. If you bring me some fish from the seaport, I'll make you a nice fishtaco.", "itemsForbidden": ["fish"],
           "secretRequired": ["fishtaco"]

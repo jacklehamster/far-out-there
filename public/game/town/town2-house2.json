@@ -51,7 +51,7 @@
     "fontSheet": { "type": "reference", "path": "../fonts/font-sheet.json" },
     "labels": [
       {
-        "text": "Do you love games? I love to play games made by jacklehamster. My favorite is Kill Baby Hitler!",
+        "text": "Do you love games? I love to play games made by jacklehamster. My favorite is Dobuki's Epic Journey!",
         "x": 1, "y": 49,
         "width": 62, "height": 20,
         "box": true
